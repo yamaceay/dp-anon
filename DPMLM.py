@@ -7,7 +7,8 @@ import numpy as np
 from collections import Counter
 import wn
 nltk.download('words', quiet=True)
-nltk.download("punkt", quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
 nltk.download("stopwords", quiet=True)
 nltk.download("words", quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)

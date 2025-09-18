@@ -83,7 +83,7 @@ class DPParaphrase():
     model = None
     device = None
 
-    def __init__(self, model_checkpoint=(Path().home() / "models/gpt2-paraphraser"), min_logit=-96.85249956065758, max_logit=-8.747697966442914):
+    def __init__(self, model_checkpoint=(Path().cwd() / "models/gpt2-paraphraser"), min_logit=-96.85249956065758, max_logit=-8.747697966442914):
         self.model_checkpoint = model_checkpoint
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
