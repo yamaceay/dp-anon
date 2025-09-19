@@ -272,7 +272,7 @@ class DPMLM():
     nlp = None
     alpha = None
 
-    def __init__(self, MODEL="roberta-base", SPACY="en_core_web_md", alpha=0.003):
+    def __init__(self, MODEL="roberta-base", SPACY="en_core_web_md", alpha=0.003, annotator=None):
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL)
         self.lm_model = AutoModelForMaskedLM.from_pretrained(MODEL)
         self.raw_model = AutoModel.from_pretrained(MODEL, output_hidden_states=True, output_attentions=True)
@@ -285,6 +285,9 @@ class DPMLM():
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.lm_model = self.lm_model.to(self.device)
         self.raw_model = self.raw_model.to(self.device)
+
+        if annotator is not None:
+            self.annotator = annotator
 
     def load_transformers(self):
         return self.tokenizer, self.lm_model, self.raw_model
@@ -417,6 +420,55 @@ class DPMLM():
             tokens = sentence
         else:
             tokens = nltk.word_tokenize(sentence)
+
+        if isinstance(epsilon, list):
+            word_eps = epsilon
+        else:
+            word_eps = [epsilon for _ in range(len(tokens))] #epsilon #/ num_tokens
+        n = sentence_enum(tokens)
+        replace = []
+        new_tokens = [str(x) for x in tokens]
+
+        perturbed = 0
+        total = 0
+        for i, (t, nn, eps) in enumerate(zip(tokens, n, word_eps)):
+            if i >= len(tokens):
+                break
+
+            if (STOP == False and t in stop) or t in string.punctuation:
+                total += 1
+                if tokens[i][0].isupper() == True:
+                    replace.append(t.capitalize())
+                else:
+                    replace.append(t)
+                continue
+
+            if REPLACE == True:
+                new_s = " ".join(new_tokens)
+                new_n = sentence_enum(new_tokens)
+                res = self.privatize(sentence, t, n=new_n[i], ENGLISH=True, FILTER=FILTER, epsilon=eps, MS=new_s, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                r = res[t+"_{}".format(new_n[i])]
+                new_tokens[i] = r
+            else:
+                res = self.privatize(sentence, t, n=nn, ENGLISH=True, FILTER=FILTER, epsilon=eps, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                r = res[t+"_{}".format(nn)]
+
+            if tokens[i][0].isupper() == True:
+                replace.append(r.capitalize())
+            else:
+                replace.append(r.lower())
+
+            if r != t:
+                perturbed += 1
+            total += 1
+
+        return self.detokenizer.detokenize(replace), perturbed, total
+    
+    def dpmlm_rewrite_subset(self, sentence, epsilon, REPLACE=False, FILTER=False, STOP=False, TEMP=True, POS=True, CONCAT=True):
+        if isinstance(sentence, list):
+            tokens = sentence
+        else:
+            tokens = self.annotator.predict(sentence)
 
         if isinstance(epsilon, list):
             word_eps = epsilon
