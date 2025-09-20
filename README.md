@@ -12,6 +12,12 @@ cd dpmlm
 pip install -r requirements.txt
 ```
 
+Then initialize the PII detection submodule as follows:
+
+```bash
+make submodules
+```
+
 Otherwise, there are two main files, both of which arte easily importable and reusable:
 - `DPMLM.py`: code for running the `DP-MLM` mechanism. `privatize` replaces a single token, while `dpmlm_rewrite` will rewrite an entire text.
 - `LLMDP.py`: implementations of both `DP-Paraphrase` and `DP-Prompt`. Note that for `DP-Prompt`, you will need to download the corresponding LMs, i.e., from Hugging Face.
