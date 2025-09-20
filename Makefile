@@ -17,18 +17,24 @@ submodules: submodules.init
 
 submodules.init:
 	mkdir -p $(BUILD_DIR)
-	git submodule init
-	git submodule sync
-	if [ -d $(BUILD_PII_DIR) ]; then git submodule update --remote --merge $(BUILD_PII_DIR); else git submodule add -f $(BUILD_PII_REMOTE) $(BUILD_PII_DIR); fi
+	if [ ! -d $(BUILD_PII_DIR) ]; then \
+		echo "Cloning PII submodule..."; \
+		git submodule init && \
+		git submodule sync && \
+		git submodule add -f $(BUILD_PII_REMOTE) $(BUILD_PII_DIR); \
+	else \
+		echo "Updating PII submodule..."; \
+		git submodule update; \
+	fi
 	cd $(BUILD_PII_DIR) && \
 		$(PIP) install --upgrade pip && \
 		$(PIP) install -r requirements.txt && \
 	cd ../..
 
 submodules.clean:
-	git submodule deinit -f build/pii
-	git rm -f build/pii
-	rm -rf .git/modules/build/pii
+	git submodule deinit -f ${BUILD_PII_DIR}
+	git rm -f ${BUILD_PII_DIR}
+	rm -rf .git/modules/${BUILD_PII_DIR}
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
