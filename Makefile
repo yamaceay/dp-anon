@@ -1,10 +1,9 @@
-.PHONY: build clean
+.PHONY: build clean submodules submodules.init submodules.clean
 
 PYTHON = python3
 PIP = pip3
 
-BUILD_DIR = build
-BUILD_PII_DIR = $(BUILD_DIR)/pii
+BUILD_PII_DIR = pii
 BUILD_PII_REMOTE = https://github.com/yamaceay/tab-anonymization.git
 
 build:
@@ -16,12 +15,11 @@ build:
 submodules: submodules.init
 
 submodules.init:
-	mkdir -p $(BUILD_DIR)
 	if [ ! -d $(BUILD_PII_DIR) ]; then \
 		echo "Cloning PII submodule..."; \
 		git submodule init && \
 		git submodule sync && \
-		git submodule add -f $(BUILD_PII_REMOTE) $(BUILD_PII_DIR); \
+		git submodule add $(BUILD_PII_REMOTE) $(BUILD_PII_DIR); \
 	else \
 		echo "Updating PII submodule..."; \
 		git submodule update; \

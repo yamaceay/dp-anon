@@ -13,8 +13,8 @@ from pii import (
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="PII Detection and Analysis")
-    parser.add_argument('--data_in', type=str, default='build/pii/echr', help='Directory containing dataset JSON files')
-    parser.add_argument('--data_out', type=str, default='build/pii/outputs', help='Output directory for processed data')
+    parser.add_argument('--data_in', type=str, default='pii/echr', help='Directory containing dataset JSON files')
+    parser.add_argument('--data_out', type=str, default='pii/outputs', help='Output directory for processed data')
     parser.add_argument('--analyze', action='store_true', help='Run dataset analysis')
     parser.add_argument('--model_train', action='store_true', help='Train the model')
     parser.add_argument('--model_eval', action='store_true', help='Evaluate the model')

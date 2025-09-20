@@ -1,3 +1,3 @@
-[submodule "build/pii"]
-	path = build/pii
+[submodule "pii"]
+	path = pii
 	url = https://github.com/yamaceay/tab-anonymization.git
