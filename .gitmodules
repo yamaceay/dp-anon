@@ -1,3 +1,6 @@
 [submodule "pii"]
 	path = pii
 	url = https://github.com/yamaceay/tab-anonymization.git
+[submodule "dpmlm"]
+	path = dpmlm
+	url = https://github.com/yamaceay/dpmlm.git
