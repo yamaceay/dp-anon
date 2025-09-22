@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 if not args.plus:
                     result, perturbed, total = M.dpmlm_rewrite_patch(args.text, epsilon=args.epsilon)
                 else:
-                    M.dpmlm_rewrite_patch_plus(args.text, epsilon=args.epsilon)
+                    result, perturbed, total, added, deleted = M.dpmlm_rewrite_patch_plus(args.text, epsilon=args.epsilon)
         else:
             M = DPMLM.DPMLM()
             if not args.plus:

@@ -436,60 +436,48 @@ class DPMLM():
             masked_sent = nth_repl(masked_sent, target, self.tokenizer.mask_token, n)
             n = [n]
 
-        #Get the input token IDs of the input consisting of: the original sentence + separator + the masked sentence.
         if CONCAT == False:
             input_ids = self.tokenizer.encode(" "+masked_sent, add_special_tokens=True)
         else:
             input_ids = self.tokenizer.encode(" "+original_sent.replace("MASK", ""), " "+masked_sent, add_special_tokens=True)
         if isinstance(target, list):
             masked_position = np.where(np.array(input_ids) == self.tokenizer.mask_token_id)[0].tolist()
-            # Check if we found all expected mask tokens
+
             if len(masked_position) != len(target):
-                # If not all mask tokens found, return original target words
                 predictions = {}
                 for t, nn in zip(target, n):
                     current = "{}_{}".format(t, nn)
                     predictions[current] = [(t, 1.0)]
                 return predictions
         else:
-            # Check if mask token is present in input_ids
             try:
                 masked_position = [input_ids.index(self.tokenizer.mask_token_id)]
                 target = [target]
             except ValueError:
-                # If mask token not found, return original target word
                 predictions = {}
                 current = "{}_{}".format(target, n)
                 predictions[current] = [(target, 1.0)]
                 return predictions
 
-        # Handle long sequences with proper chunking around the mask token
-        max_seq_len = 512  # RoBERTa's actual maximum sequence length
+        max_seq_len = 512  # self.raw_model.config.max_position_embeddings - 2
         if len(input_ids) > max_seq_len:
-            # Find the mask token position
             mask_pos = masked_position[0] if masked_position else len(input_ids) // 2
             
-            # Calculate how much context we can keep on each side
-            available_tokens = max_seq_len - 2  # Reserve space for special tokens
+            available_tokens = max_seq_len - 2
             context_per_side = available_tokens // 2
             
-            # Calculate start and end positions
             start_pos = max(0, mask_pos - context_per_side)
             end_pos = min(len(input_ids), mask_pos + context_per_side + 1)
             
-            # If we can't fit enough context on one side, use the remaining space for the other side
             if start_pos == 0:
                 end_pos = min(len(input_ids), max_seq_len)
             elif end_pos == len(input_ids):
                 start_pos = max(0, len(input_ids) - max_seq_len)
             
-            # Truncate the input
             input_ids = input_ids[start_pos:end_pos]
             
-            # Update mask positions
             masked_position = [pos - start_pos for pos in masked_position if start_pos <= pos < end_pos]
             
-            # If mask token was lost during truncation, return original target
             if not masked_position:
                 predictions = {}
                 for t, nn in zip(target, n):
@@ -500,7 +488,6 @@ class DPMLM():
         model_input = torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device)        
         original_output = self.raw_model(model_input)
 
-        #Get the predictions of the Masked LM transformer.
         with torch.no_grad():
             output = self.lm_model(model_input)
         
@@ -510,7 +497,6 @@ class DPMLM():
         for t, m, nn in zip(target, masked_position, n):
             current = "{}_{}".format(t, nn)
 
-            #Get top guesses: their token IDs, scores, and words.
             mask_logits = logits[m].squeeze()
             if TEMP == True:
                 mask_logits = np.clip(mask_logits, self.clip_min, self.clip_max)
@@ -558,7 +544,6 @@ class DPMLM():
                 if cand not in zipped:
                     continue
                 
-                # remove non-words
                 if ENGLISH:
                     if cand not in self.vocab and self.lemmatizer.lemmatize(cand) not in self.vocab:
                         del zipped[cand]
@@ -652,9 +637,8 @@ class DPMLM():
         perturbed = 0
         total = 0
         
-        # Build result by replacing tokens in-place in the original sentence
         result = sentence
-        offset_adjust = 0  # Track cumulative length changes
+        offset_adjust = 0
         
         for i, (t, nn, eps, crit) in enumerate(zip(tokens, n, word_eps, critical)):
             if i >= len(tokens):
@@ -680,9 +664,9 @@ class DPMLM():
                 if key in res:
                     r = res[key]
                     if isinstance(r, list) and len(r) > 0:
-                        r = r[0][0]  # Extract the word from [(word, score)] format
+                        r = r[0][0]
                 else:
-                    r = t  # Fallback to original word
+                    r = t
                 new_tokens[i] = r
             else:
                 res = self.privatize_patch(sentence, t, n=nn, ENGLISH=True, FILTER=FILTER, epsilon=eps, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
@@ -690,20 +674,17 @@ class DPMLM():
                 if key in res:
                     r = res[key]
                     if isinstance(r, list) and len(r) > 0:
-                        r = r[0][0]  # Extract the word from [(word, score)] format
+                        r = r[0][0]
                 else:
-                    r = t  # Fallback to original word
+                    r = t
 
-            # Preserve original capitalization pattern
             if t and t[0].isupper():
                 r = r.capitalize() if r else t
             elif t and t[0].islower():
                 r = r.lower() if r else t
             
-            # Replace the token in the original sentence
             result = result[:adjusted_start] + r + result[adjusted_end:]
             
-            # Update offset adjustment
             offset_adjust += len(r) - len(t)
 
             if r != t:
@@ -711,9 +692,6 @@ class DPMLM():
             total += 1
 
         return result, perturbed, total
-
-    def dpmlm_rewrite_patch_plus(self, sentence, epsilon, FILTER=False, TEMP=True, POS=True, CONCAT=True, ADD_PROB=0.15, DEL_PROB=0.05):
-        pass
     
     def dpmlm_rewrite_plus(self, sentence, epsilon, FILTER=False, TEMP=True, POS=True, CONCAT=True, ADD_PROB=0.15, DEL_PROB=0.05):
         if isinstance(sentence, list):
@@ -778,3 +756,124 @@ class DPMLM():
                 added += 1
 
         return self.detokenizer.detokenize(replace), perturbed, total, added, deleted
+    
+    def dpmlm_rewrite_patch_plus(self, sentence, epsilon, FILTER=False, TEMP=True, POS=True, CONCAT=True, ADD_PROB=0.15, DEL_PROB=0.05):
+        unique_labels = self.annotator.labels.unique_labels
+        is_critical = lambda x : x['entity_group'] in unique_labels
+        
+        offsets = list(TreebankWordTokenizer().span_tokenize(sentence))
+        tokens = [sentence[start:end] for start, end in offsets]
+        critical = [False for _ in range(len(tokens))]
+
+        spans = self.annotator.predict(sentence)
+        for span in spans:
+            if is_critical(span):
+                start, end = span['start'], span['end']
+                for i, (s, e) in enumerate(offsets):
+                    if critical[i]:
+                        continue
+                    if s <= start < e or s < end <= e:
+                        critical[i] = True
+        
+        if isinstance(epsilon, list):
+            word_eps = epsilon
+        else:
+            word_eps = [epsilon for _ in range(len(tokens))]
+        
+        new_tokens = [str(x) for x in tokens]
+        n = sentence_enum(tokens)
+
+        perturbed = 0
+        total = 0
+        deleted = 0
+        added = 0
+        
+        result = sentence
+        offset_adjust = 0
+        
+        for i, (t, nn, eps, crit) in enumerate(zip(tokens, n, word_eps, critical)):
+            if i >= len(tokens):
+                break
+                
+            # Only process critical (PII) tokens
+            if not crit:
+                total += 1
+                continue
+
+            if t in string.punctuation:
+                total += 1
+                continue
+
+            original_start, original_end = offsets[i]
+            adjusted_start = original_start + offset_adjust
+            adjusted_end = original_end + offset_adjust
+
+            # Deletion logic
+            if i == len(tokens) - 1:
+                DELETE = 1  # Never delete the last token
+            else:
+                DELETE = np.random.rand()
+                
+            if DELETE >= DEL_PROB:
+                # Replace token (not delete)
+                new_s = " ".join(new_tokens)
+                
+                # Use patch method for privatization
+                res = self.privatize_patch(sentence, t, n=nn, ENGLISH=True, FILTER=FILTER, epsilon=eps, MS=new_s, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                key = t+"_{}".format(nn)
+                if key in res:
+                    r = res[key]
+                    if isinstance(r, list) and len(r) > 0:
+                        r = r[0][0]
+                else:
+                    r = t
+                
+                # Handle capitalization like in patch method
+                if t and t[0].isupper():
+                    r = r.capitalize() if r else t
+                elif t and t[0].islower():
+                    r = r.lower() if r else t
+                
+                # Apply replacement to result string
+                result = result[:adjusted_start] + r + result[adjusted_end:]
+                offset_adjust += len(r) - len(t)
+                
+                # Update new_tokens for consistency
+                new_tokens[i] = r
+
+                if r != t:
+                    perturbed += 1
+                total += 1
+                
+                # Addition logic after replacement
+                ADD = np.random.rand()
+                if ADD <= ADD_PROB:
+                    # Add a new token after current position
+                    add_pos = adjusted_start + len(r)
+                    
+                    # Create context for mask prediction
+                    tokens_copy = new_tokens.copy()
+                    tokens_copy.insert(i+1, "MASK")
+                    new_s = " ".join(tokens_copy)
+                    
+                    res = self.privatize_patch(sentence, "MASK", n=1, ENGLISH=True, FILTER=FILTER, epsilon=eps, MS=new_s, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                    key = "MASK_1"
+                    if key in res:
+                        add_word = res[key]
+                        if isinstance(add_word, list) and len(add_word) > 0:
+                            add_word = add_word[0][0]
+                    else:
+                        add_word = ""
+                    
+                    if add_word:
+                        # Insert the new word with a space
+                        result = result[:add_pos] + " " + add_word + result[add_pos:]
+                        offset_adjust += len(" " + add_word)
+                        added += 1
+            else:
+                # Delete token
+                result = result[:adjusted_start] + result[adjusted_end:]
+                offset_adjust -= len(t)
+                deleted += 1
+
+        return result, perturbed, total, added, deleted
