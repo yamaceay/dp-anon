@@ -4,10 +4,10 @@ from pii import (
     DatasetAnalyzer,
     DatasetVisualizer,
     TorchDataset,
-    TorchInitializer,
+    TorchTokenClassifier,
     TorchCollator,
     TorchEvaluator,
-    PIIDetector,
+    PIIDeidentifier,
 )
 
 if __name__ == "__main__":
@@ -54,7 +54,7 @@ if __name__ == "__main__":
             f.write(output)
 
     if args.model_train or args.model_eval:
-        with TorchInitializer(args.model_name, labels) as (model, tokenizer):
+        with TorchTokenClassifier(args.model_name, labels) as (model, tokenizer):
             train_dataset = TorchDataset(datasets['train'], tokenizer, labels)
             train_dataset.sample_one(tokenizer)
             
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             evaluator = TorchEvaluator(labels)
             evaluator.sample_one()
 
-            trainer = PIIDetector(args.data_out, model, tokenizer, labels)
+            trainer = PIIDeidentifier(args.data_out, model, tokenizer, labels)
             trainer.sample_one()
 
             if args.model_train:

@@ -13,7 +13,7 @@ nltk.download("stopwords", quiet=True)
 nltk.download("words", quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
 nltk.download('wordnet', quiet=True)
-from nltk.tokenize.treebank import TreebankWordDetokenizer
+from nltk.tokenize.treebank import TreebankWordTokenizer, TreebankWordDetokenizer
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from transformers import AutoModel, AutoTokenizer, AutoModelForMaskedLM, logging
@@ -415,6 +415,132 @@ class DPMLM():
 
         return predictions
     
+    def privatize_patch(self, sentence, target, n=1, K=5, CONCAT=True, FILTER=True, POS=False, ENGLISH=False, epsilon=1, MS=None, TEMP=False):
+        tokenizer = TreebankWordTokenizer()
+        spans = list(tokenizer.span_tokenize(sentence))
+        split_sent = [sentence[start:end] for start, end in spans]
+        offsets = [(start, end) for start, end in spans]
+        original_sent = ' '.join(split_sent)
+
+        if MS is None:
+            masked_sent = ' '.join(split_sent)
+        else:
+            masked_sent = MS
+
+        if isinstance(target, list):
+            if n == 1:
+                n = [1 for _ in range(len(target))]
+
+            for t, nn in zip(target, n):
+                masked_sent = nth_repl(masked_sent, t, self.tokenizer.mask_token, nn)
+        else:
+            masked_sent = nth_repl(masked_sent, target, self.tokenizer.mask_token, n)
+            n = [n]
+
+        #Get the input token IDs of the input consisting of: the original sentence + separator + the masked sentence.
+        if CONCAT == False:
+            input_ids = self.tokenizer.encode(" "+masked_sent, add_special_tokens=True)
+        else:
+            input_ids = self.tokenizer.encode(" "+original_sent.replace("MASK", ""), " "+masked_sent, add_special_tokens=True)
+        if isinstance(target, list):
+            masked_position = np.where(np.array(input_ids) == self.tokenizer.mask_token_id)[0].tolist()
+            # Check if we found all expected mask tokens
+            if len(masked_position) != len(target):
+                # If not all mask tokens found, return original target words
+                predictions = {}
+                for t, nn in zip(target, n):
+                    current = "{}_{}".format(t, nn)
+                    predictions[current] = [(t, 1.0)]
+                return predictions
+        else:
+            # Check if mask token is present in input_ids
+            try:
+                masked_position = [input_ids.index(self.tokenizer.mask_token_id)]
+                target = [target]
+            except ValueError:
+                # If mask token not found, return original target word
+                predictions = {}
+                current = "{}_{}".format(target, n)
+                predictions[current] = [(target, 1.0)]
+                return predictions
+
+        original_output = self.raw_model(torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device))
+
+        #Get the predictions of the Masked LM transformer.
+        with torch.no_grad():
+            output = self.lm_model(torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device))
+        
+        logits = output[0].squeeze().detach().cpu().numpy()
+
+        predictions = {}
+        for t, m, nn in zip(target, masked_position, n):
+            current = "{}_{}".format(t, nn)
+
+            #Get top guesses: their token IDs, scores, and words.
+            mask_logits = logits[m].squeeze()
+            if TEMP == True:
+                mask_logits = np.clip(mask_logits, self.clip_min, self.clip_max)
+                mask_logits = mask_logits / (2 * self.sensitivity / epsilon)
+
+                logits_idx = [i for i, x in enumerate(mask_logits)]
+                scores = torch.softmax(torch.from_numpy(mask_logits), dim=0)
+                scores = scores / scores.sum()
+                chosen_idx = np.random.choice(logits_idx, p=scores.numpy())
+                predictions[current] = (self.tokenizer.decode(chosen_idx).strip(), scores[chosen_idx])
+                continue
+            else:
+                top_tokens = torch.topk(torch.from_numpy(mask_logits), k=K, dim=0)[1]
+                scores = torch.softmax(torch.from_numpy(mask_logits), dim=0)[top_tokens].tolist()
+            words = [self.tokenizer.decode(i.item()).strip() for i in top_tokens]
+
+            if FILTER == True:
+                words, scores, top_tokens = filter_words(t, words, scores, top_tokens, self.opposites)
+
+            if len(words) == 0:
+                predictions[current] = [(t, 1)]
+                continue
+
+
+            assert len(words) == len(scores)
+
+            if len(words) == 0:
+                predictions[current] = [(t, 1)]
+                continue
+
+            original_score = torch.softmax(torch.from_numpy(mask_logits), dim=0)[m]
+            sentences = list()
+
+            for i in range(len(words)):
+                subst_word = top_tokens[i]
+                input_ids[m] = int(subst_word)
+                sentences.append(list(input_ids))
+
+            torch_sentences = torch.tensor(sentences).to(self.device)
+
+            finals, _, _ = self.calc_scores(scores, torch_sentences, original_output, original_score, m)
+            finals = map(lambda f : float(f), finals)
+
+            zipped = dict(zip(words, finals))
+            for cand in words:
+                if cand not in zipped:
+                    continue
+                
+                # remove non-words
+                if ENGLISH:
+                    if cand not in self.vocab and self.lemmatizer.lemmatize(cand) not in self.vocab:
+                        del zipped[cand]
+                        continue
+
+            zipped = dict(zipped)
+            finish = list(sorted(zipped.items(), key=lambda item: item[1], reverse=True))[:K]
+            predictions[current] = finish
+
+        if TEMP == True:
+            for p in predictions:
+                predictions[p] = predictions[p][0]
+
+        return predictions
+
     def dpmlm_rewrite(self, sentence, epsilon, REPLACE=False, FILTER=False, STOP=False, TEMP=True, POS=True, CONCAT=True):
         if isinstance(sentence, list):
             tokens = sentence
@@ -464,54 +590,97 @@ class DPMLM():
 
         return self.detokenizer.detokenize(replace), perturbed, total
     
-    def dpmlm_rewrite_subset(self, sentence, epsilon, REPLACE=False, FILTER=False, STOP=False, TEMP=True, POS=True, CONCAT=True):
-        if isinstance(sentence, list):
-            tokens = sentence
-        else:
-            tokens = self.annotator.predict(sentence)
+    def dpmlm_rewrite_patch(self, sentence, epsilon, REPLACE=False, FILTER=False, STOP=False, TEMP=True, POS=True, CONCAT=True):
+        unique_labels = self.annotator.labels.unique_labels
+        is_critical = lambda x : x['entity_group'] in unique_labels
+        
+        offsets = list(TreebankWordTokenizer().span_tokenize(sentence))
+        tokens = [sentence[start:end] for start, end in offsets]
+        critical = [False for _ in range(len(tokens))]
 
+        spans = self.annotator.predict(sentence)
+        for span in spans:
+            if is_critical(span):
+                start, end = span['start'], span['end']
+                for i, (s, e) in enumerate(offsets):
+                    if critical[i]:
+                        continue
+                    if s <= start < e or s < end <= e:
+                        critical[i] = True
+        
         if isinstance(epsilon, list):
             word_eps = epsilon
         else:
             word_eps = [epsilon for _ in range(len(tokens))] #epsilon #/ num_tokens
-        n = sentence_enum(tokens)
-        replace = []
+        
         new_tokens = [str(x) for x in tokens]
+        n = sentence_enum(tokens)
 
         perturbed = 0
         total = 0
-        for i, (t, nn, eps) in enumerate(zip(tokens, n, word_eps)):
+        
+        # Build result by replacing tokens in-place in the original sentence
+        result = sentence
+        offset_adjust = 0  # Track cumulative length changes
+        
+        for i, (t, nn, eps, crit) in enumerate(zip(tokens, n, word_eps, critical)):
             if i >= len(tokens):
                 break
 
+            if not crit:
+                total += 1
+                continue
+
             if (STOP == False and t in stop) or t in string.punctuation:
                 total += 1
-                if tokens[i][0].isupper() == True:
-                    replace.append(t.capitalize())
-                else:
-                    replace.append(t)
                 continue
+
+            original_start, original_end = offsets[i]
+            adjusted_start = original_start + offset_adjust
+            adjusted_end = original_end + offset_adjust
 
             if REPLACE == True:
                 new_s = " ".join(new_tokens)
                 new_n = sentence_enum(new_tokens)
-                res = self.privatize(sentence, t, n=new_n[i], ENGLISH=True, FILTER=FILTER, epsilon=eps, MS=new_s, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
-                r = res[t+"_{}".format(new_n[i])]
+                res = self.privatize_patch(sentence, t, n=new_n[i], ENGLISH=True, FILTER=FILTER, epsilon=eps, MS=new_s, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                key = t+"_{}".format(new_n[i])
+                if key in res:
+                    r = res[key]
+                    if isinstance(r, list) and len(r) > 0:
+                        r = r[0][0]  # Extract the word from [(word, score)] format
+                else:
+                    r = t  # Fallback to original word
                 new_tokens[i] = r
             else:
-                res = self.privatize(sentence, t, n=nn, ENGLISH=True, FILTER=FILTER, epsilon=eps, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
-                r = res[t+"_{}".format(nn)]
+                res = self.privatize_patch(sentence, t, n=nn, ENGLISH=True, FILTER=FILTER, epsilon=eps, TEMP=TEMP, POS=POS, CONCAT=CONCAT)
+                key = t+"_{}".format(nn)
+                if key in res:
+                    r = res[key]
+                    if isinstance(r, list) and len(r) > 0:
+                        r = r[0][0]  # Extract the word from [(word, score)] format
+                else:
+                    r = t  # Fallback to original word
 
-            if tokens[i][0].isupper() == True:
-                replace.append(r.capitalize())
-            else:
-                replace.append(r.lower())
+            # Preserve original capitalization pattern
+            if t and t[0].isupper():
+                r = r.capitalize() if r else t
+            elif t and t[0].islower():
+                r = r.lower() if r else t
+            
+            # Replace the token in the original sentence
+            result = result[:adjusted_start] + r + result[adjusted_end:]
+            
+            # Update offset adjustment
+            offset_adjust += len(r) - len(t)
 
             if r != t:
                 perturbed += 1
             total += 1
 
-        return self.detokenizer.detokenize(replace), perturbed, total
+        return result, perturbed, total
+
+    def dpmlm_rewrite_patch_plus(self, sentence, epsilon, FILTER=False, TEMP=True, POS=True, CONCAT=True, ADD_PROB=0.15, DEL_PROB=0.05):
+        pass
     
     def dpmlm_rewrite_plus(self, sentence, epsilon, FILTER=False, TEMP=True, POS=True, CONCAT=True, ADD_PROB=0.15, DEL_PROB=0.05):
         if isinstance(sentence, list):
