@@ -419,7 +419,6 @@ class DPMLM():
         tokenizer = TreebankWordTokenizer()
         spans = list(tokenizer.span_tokenize(sentence))
         split_sent = [sentence[start:end] for start, end in spans]
-        offsets = [(start, end) for start, end in spans]
         original_sent = ' '.join(split_sent)
 
         if MS is None:
@@ -464,11 +463,46 @@ class DPMLM():
                 predictions[current] = [(target, 1.0)]
                 return predictions
 
-        original_output = self.raw_model(torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device))
+        # Handle long sequences with proper chunking around the mask token
+        max_seq_len = 512  # RoBERTa's actual maximum sequence length
+        if len(input_ids) > max_seq_len:
+            # Find the mask token position
+            mask_pos = masked_position[0] if masked_position else len(input_ids) // 2
+            
+            # Calculate how much context we can keep on each side
+            available_tokens = max_seq_len - 2  # Reserve space for special tokens
+            context_per_side = available_tokens // 2
+            
+            # Calculate start and end positions
+            start_pos = max(0, mask_pos - context_per_side)
+            end_pos = min(len(input_ids), mask_pos + context_per_side + 1)
+            
+            # If we can't fit enough context on one side, use the remaining space for the other side
+            if start_pos == 0:
+                end_pos = min(len(input_ids), max_seq_len)
+            elif end_pos == len(input_ids):
+                start_pos = max(0, len(input_ids) - max_seq_len)
+            
+            # Truncate the input
+            input_ids = input_ids[start_pos:end_pos]
+            
+            # Update mask positions
+            masked_position = [pos - start_pos for pos in masked_position if start_pos <= pos < end_pos]
+            
+            # If mask token was lost during truncation, return original target
+            if not masked_position:
+                predictions = {}
+                for t, nn in zip(target, n):
+                    current = "{}_{}".format(t, nn)
+                    predictions[current] = [(t, 1.0)]
+                return predictions
+
+        model_input = torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device)        
+        original_output = self.raw_model(model_input)
 
         #Get the predictions of the Masked LM transformer.
         with torch.no_grad():
-            output = self.lm_model(torch.tensor(input_ids).reshape(1, len(input_ids)).to(self.device))
+            output = self.lm_model(model_input)
         
         logits = output[0].squeeze().detach().cpu().numpy()
 
@@ -499,7 +533,6 @@ class DPMLM():
             if len(words) == 0:
                 predictions[current] = [(t, 1)]
                 continue
-
 
             assert len(words) == len(scores)
 
