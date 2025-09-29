@@ -30,9 +30,13 @@ submodules.init:
 	cd ../..
 
 submodules.clean:
-	git submodule deinit -f ${BUILD_PII_DIR}
-	git rm -f ${BUILD_PII_DIR}
-	rm -rf .git/modules/${BUILD_PII_DIR}
+	@if [ -z "$(dir)" ]; then \
+		echo "Please provide a directory path using 'dir=<path>'"; \
+		exit 1; \
+	fi
+	git submodule deinit -f $(dir)
+	git rm -f $(dir)
+	rm -rf .git/modules/$(dir)
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +

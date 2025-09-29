@@ -4,3 +4,9 @@
 [submodule "dpmlm"]
 	path = dpmlm
 	url = https://github.com/yamaceay/dpmlm.git
+[submodule "tri"]
+	path = tri
+	url = https://github.com/yamaceay/TRI
+[submodule "petre"]
+	path = petre
+	url = https://github.com/yamaceay/PETRE.git
