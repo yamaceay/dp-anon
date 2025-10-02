@@ -72,3 +72,9 @@ if __name__ == "__main__":
                 trainer.train(train_dataset, val_dataset, collator, evaluator, epochs=args.model_epochs)
             if args.model_eval:
                 trainer.evaluate(test_dataset)
+                # output = ""
+                # for i, sample in enumerate(datasets['test']):
+                #     output += f"# Sample {i}\n----------------\n\n" + trainer._eval_one_sample(sample['text'], sample['char_tags'])
+                # with open("sample_output.md", "w", encoding="utf-8") as f:
+                #     f.write(output)
+                # print("Sample outputs written to sample_output.md")
