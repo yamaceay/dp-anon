@@ -9,11 +9,11 @@ import argparse
 import logging
 from typing import Optional, Dict, Any
 
-# Import the new high-level interfaces
+
 import dpmlm
 from pii import DataLabels, TorchTokenClassifier, PIIDeidentifier
 
-# Setup logging
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -44,7 +44,7 @@ def create_annotator(annotator_path: str, data_out: str) -> Optional[PIIDeidenti
         
     logger.info("Loading PII annotator from: %s", annotator_path)
     
-    # Define standard PII labels
+    
     unique_labels = ['CODE', 'DEM', 'ORG', 'QUANTITY', 'LOC', 'DATETIME', 'MISC', 'PERSON']
     labels = ['O'] + [f'B-{label}' for label in unique_labels] + [f'I-{label}' for label in unique_labels]
     
@@ -143,11 +143,11 @@ def main():
     
     args = parser.parse_args()
     
-    # Setup logging level
+    
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     
-    # Handle list commands
+    
     if args.list_mechanisms:
         print("Available mechanisms:")
         for mechanism in dpmlm.list_mechanisms():
@@ -160,16 +160,16 @@ def main():
             print(f"  - {preset}")
         return
     
-    # Validate that text is provided for processing commands
+    
     if not args.text:
         parser.error("Input text is required for text processing. Use --list-mechanisms or --list-presets to see available options.")
     
-    # Decode input text
+    
     text = recode_text(args.text)
     logger.info("Processing text of length: %d characters", len(text))
     
     try:
-        # Load configuration
+        
         config = None
         if args.config:
             import json
@@ -179,12 +179,12 @@ def main():
         else:
             config = build_config_from_args(args)
         
-        # Create annotator if needed
+        
         annotator = None
         if args.annotator and args.type == "dpmlm":
             annotator = create_annotator(args.annotator, args.data_out)
         
-        # Create mechanism
+        
         if args.preset:
             logger.info("Using preset configuration: %s", args.preset)
             mechanism = dpmlm.create_from_preset(
@@ -200,7 +200,7 @@ def main():
                 annotator=annotator
             )
         
-        # Apply differential privacy
+        
         logger.info("Applying differential privacy with epsilon=%.3f", args.epsilon)
         result = mechanism.privatize(
             text, 
@@ -209,7 +209,7 @@ def main():
             method="patch" if args.type == "dpmlm" else "default"
         )
         
-        # Display results
+        
         print("\n" + "="*80)
         print("DIFFERENTIAL PRIVACY TEXT PROCESSING RESULTS")
         print("="*80)

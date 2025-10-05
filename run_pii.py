@@ -13,25 +13,26 @@ from pii import (
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="PII Detection and Analysis")
-    parser.add_argument('--data_in', type=str, default='pii/echr', help='Directory containing dataset JSON files')
-    parser.add_argument('--data_out', type=str, default='pii/outputs', help='Output directory for processed data')
-    parser.add_argument('--analyze', action='store_true', help='Run dataset analysis')
+    parser.add_argument('--data_in', type=str, default='data/TAB/splitted', help='Directory containing dataset JSON files')
+    parser.add_argument('--model_out', type=str, default='models/pii_detectors', help='Output directory for model')
     parser.add_argument('--model_train', action='store_true', help='Train the model')
     parser.add_argument('--model_eval', action='store_true', help='Evaluate the model')
     parser.add_argument('--model_name', type=str, default='distilbert-base-uncased', help='Pre-trained model name')
     parser.add_argument('--model_epochs', type=int, default=50, help='Number of training epochs')
+    parser.add_argument('--analyze', action='store_true', help='Run dataset analysis')
+    parser.add_argument('--analyze_out', type=str, default='outputs/PII', help='Output directory for analysis reports')
     
     args = parser.parse_args()
     processor = DatasetProcessor(args.data_in)
     datasets, labels = processor.process()
     
-    os.makedirs(args.data_out, exist_ok=True)
+    os.makedirs(args.model_out, exist_ok=True)
 
     if args.analyze:
-        report_path = os.path.join(args.data_out, 'tab_analysis.md')
-        entity_path = os.path.join(args.data_out, 'per_entity.png')
-        identifier_path = os.path.join(args.data_out, 'per_identifier.png')
-        confidentiality_path = os.path.join(args.data_out, 'per_confidentiality.png')
+        report_path = os.path.join(args.analyze_out, 'tab_analysis.md')
+        entity_path = os.path.join(args.analyze_out, 'per_entity.png')
+        identifier_path = os.path.join(args.analyze_out, 'per_identifier.png')
+        confidentiality_path = os.path.join(args.analyze_out, 'per_confidentiality.png')
 
         output = ""
         analyzer = DatasetAnalyzer(datasets)
@@ -65,7 +66,7 @@ if __name__ == "__main__":
             evaluator = TorchEvaluator(labels)
             evaluator.sample_one()
 
-            trainer = PIIDeidentifier(args.data_out, model, tokenizer, labels)
+            trainer = PIIDeidentifier(args.model_out, model, tokenizer, labels)
             trainer.sample_one()
 
             if args.model_train:
