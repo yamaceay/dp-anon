@@ -214,8 +214,6 @@ def main():
         for mechanism in dpmlm.list_mechanisms():
             if mechanism in seen:
                 continue
-            if mechanism == "dpmlm_riskaware":
-                continue
             print(f"  - {mechanism}")
             if mechanism == "dpmlm":
                 print("      * uniform (default)")
