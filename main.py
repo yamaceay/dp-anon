@@ -112,6 +112,29 @@ def normalise_dpmlm_config(config: Dict[str, Any]) -> Dict[str, Any]:
     return config
 
 
+def _print_token_allocation(entry: Dict[str, Any]) -> None:
+    token_text = entry.get("token", "")
+    token_display = token_text.replace('\n', ' ').strip()
+    if len(token_display) > 30:
+        token_display = token_display[:27] + "..."
+    entity_fragment = ""
+    if entry.get("entity_type"):
+        entity_fragment = f" entity={entry['entity_type']}"
+
+    print(
+        "  #{rank:>2} [{start}-{end}] '{token}' weight={weight:.4g} "
+        "epsilon={epsilon:.4g} score={score:.4g}{entity}".format(
+            rank=entry.get("rank", 0),
+            start=entry.get("start"),
+            end=entry.get("end"),
+            token=token_display,
+            weight=entry.get("weight", 0.0),
+            epsilon=entry.get("epsilon", 0.0),
+            score=entry.get("score", 0.0),
+            entity=entity_fragment,
+        )
+    )
+
 def main():
     """Main entry point with improved architecture."""
     parser = argparse.ArgumentParser(
@@ -373,11 +396,10 @@ def main():
         
         if result.metadata:
             token_allocations = result.metadata.get("token_allocations")
-            token_summary = result.metadata.get("token_allocations_summary", [])
             other_metadata = {
                 key: value
                 for key, value in result.metadata.items()
-                if key not in {"token_allocations", "token_allocations_summary"}
+                if key not in {"token_allocations"}
             }
 
             if other_metadata:
@@ -385,34 +407,17 @@ def main():
                 for key, value in other_metadata.items():
                     print(f"  {key}: {value}")
 
-            if token_summary:
-                print("Top risk-weighted tokens:")
-                for entry in token_summary:
-                    token_text = entry.get("token", "")
-                    token_display = token_text.replace('\n', ' ').strip()
-                    if len(token_display) > 30:
-                        token_display = token_display[:27] + "..."
-                    entity_fragment = ""
-                    if entry.get("entity_type"):
-                        entity_fragment = f" entity={entry['entity_type']}"
+            if token_allocations:
+                print("Token risk allocations:")
+                showed_token_allocations = token_allocations
+                truncate_results = len(token_allocations) >= 10
+                if truncate_results:
+                    showed_token_allocations = token_allocations[:5] + token_allocations[-5:]
 
-                    print(
-                        "  #{rank:>2} [{start}-{end}] '{token}' weight={weight:.4g} "
-                        "epsilon={epsilon:.4g} score={score:.4g}{entity}".format(
-                            rank=entry.get("rank", 0),
-                            start=entry.get("start"),
-                            end=entry.get("end"),
-                            token=token_display,
-                            weight=entry.get("weight", 0.0),
-                            epsilon=entry.get("epsilon", 0.0),
-                            score=entry.get("score", 0.0),
-                            entity=entity_fragment,
-                        )
-                    )
-                if token_allocations is not None:
-                    print(f"  (total tokens evaluated: {len(token_allocations)})")
-            elif token_allocations is not None:
-                print(f"Token allocations recorded: {len(token_allocations)}")
+                for i, entry in enumerate(showed_token_allocations):
+                    if truncate_results and i == 5:
+                        print("  ...")
+                    _print_token_allocation(entry)
         
         print("="*80)
         
