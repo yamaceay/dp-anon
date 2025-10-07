@@ -259,6 +259,17 @@ def main():
         if args.type == "dpmlm" and risk_type == "uniform" and args.dpmlm_risk_model:
             logger.warning("Ignoring --dpmlm-risk-model because DPMLM risk type is 'uniform'.")
 
+
+        try:
+            import torch
+            device = (
+                "cuda" if torch.cuda.is_available() else
+                "mps" if torch.backends.mps.is_available() else
+                "cpu"
+            )
+        except ImportError as exc:
+            parser.error(f"PyTorch is required for device logic: {exc}")
+
         if args.type == "dpmlm" and risk_type != "uniform":
             if not args.dpmlm_risk_model:
                 parser.error("Non-uniform DPMLM risk scoring requires --dpmlm-risk-model with a text-classification model.")
@@ -266,16 +277,6 @@ def main():
                 from transformers import pipeline as hf_pipeline
             except ImportError as exc:
                 parser.error(f"Transformers is required for risk-aware scoring: {exc}")
-
-            try:
-                import torch
-                device = (
-                    "cuda" if torch.cuda.is_available() else
-                    "mps" if torch.backends.mps.is_available() else
-                    "cpu"
-                )
-            except ImportError as exc:
-                parser.error(f"PyTorch is required for risk-aware scoring: {exc}")
 
             logger.info("Loading risk scoring pipeline: %s", args.dpmlm_risk_model)
             risk_pipeline = hf_pipeline(
