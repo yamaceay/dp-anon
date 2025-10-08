@@ -1,6 +1,0 @@
-{
-    "risk-type": "greedy",
-    "risk-model": "models/tri_pipelines/TAB/TRI_Pipeline",
-    "dpmlm-annotator": "models/pii_detectors/pii_model_20251004_184431",
-    "dpmlm-pii-threshold": 0.95
-}
