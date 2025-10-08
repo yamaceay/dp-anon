@@ -6,7 +6,10 @@
 	url = https://github.com/yamaceay/dpmlm.git
 [submodule "tri"]
 	path = tri
-	url = https://github.com/yamaceay/TRI
+	url = https://github.com/yamaceay/TRI.git
 [submodule "petre"]
 	path = petre
 	url = https://github.com/yamaceay/petre.git
+[submodule "bmark"]
+	path = bmark
+	url = https://github.com/yamaceay/benchmark.git
