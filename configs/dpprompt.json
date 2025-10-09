@@ -1,0 +1,19 @@
+{
+  "generic": {
+    "device": "auto"
+  },
+  "model": {
+    "model_config": {
+      "model_name": "google/flan-t5-base",
+      "max_sequence_length": 512,
+      "truncation": true,
+      "padding": true
+    },
+    "min_logit": -19.22705113016047,
+    "max_logit": 7.48324937989716,
+    "top_k": 0,
+    "top_p": 1.0,
+    "do_sample": true,
+    "prompt_template": "Document : {}\\nParaphrase of the document :"
+  }
+}
