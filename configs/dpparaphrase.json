@@ -4,7 +4,7 @@
   },
   "model": {
     "model_config": {
-      "model_name": "~/models/gpt2-paraphraser",
+      "model_name": "./models/gpt2-paraphraser",
       "max_sequence_length": 512,
       "truncation": true,
       "padding": true
