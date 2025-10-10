@@ -22,6 +22,7 @@ from dpmlm.config_utils import (
     coerce_dpmlm_config,
     prepare_dpmlm_model_config,
 )
+from petre import PETRE
 from pii import DataLabels, TorchTokenClassifier, PIIDeidentifier
 
 logging.basicConfig(
@@ -113,7 +114,6 @@ def _print_token_allocation(entry: Dict[str, Any]) -> None:
             entity=entity_fragment,
         )
     )
-
 
 def main() -> int:
     """Main entry point with improved architecture."""
@@ -244,6 +244,11 @@ def main() -> int:
             config_for_factory["verbose"] = True
 
     try:
+        ### TODO: dependency injection for PETRE so that we can use our own re-identifier
+        # petre = PETRE(**config)
+        # petre.initialization()
+        # accuracy, ranks, docs_probs = petre.evaluate(max_rank=1)
+
         if args.preset:
             logger.info("Using preset configuration: %s", args.preset)
             mechanism = dpmlm.create_from_preset(
