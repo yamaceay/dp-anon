@@ -1,7 +1,17 @@
-importlib_resources
+accelerate
+datasets
+en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.0/en_core_web_lg-3.7.0-py3-none-any.whl
+transformers
+matplotlib
+mpmath
+nervaluate
 nltk
 numpy
-spacy
+pandas
+presidio_analyzer
+scikit_learn
+seaborn
+shap
 torch
+tqdm
 transformers
-wn

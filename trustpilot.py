@@ -149,6 +149,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--config",
+        "-c",
         type=str,
         default=None,
         help="Path to JSON configuration file containing model-specific parameters",

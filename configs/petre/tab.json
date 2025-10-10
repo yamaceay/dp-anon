@@ -1,0 +1,13 @@
+{
+    "output_base_folder_path": "outputs/TAB",
+    "data_file_path": "data/TAB/splitted/test.json",
+    "individual_name_column": "doc_id",
+    "original_text_column": "text",
+    "starting_anonymization_path":"data/TAB/annotations/manual.json",
+    "tri_pipeline_path":"models/tri_pipelines/TAB/TRI_Pipeline",
+    "ks":[2,3,5,7,10],
+    "mask_text":"[MASK]",
+    "use_mask_all_instances":false,
+    "explainability_mode":"Greedy",
+    "use_chunking":true
+}

@@ -1,0 +1,8 @@
+{
+    "input_file": "data/trustpilot/www.amazon.com/train.json",
+    "output_dir": "outputs/trustpilot/www.amazon.com",
+    "id_column": "review_id",
+    "text_column": "review",
+    "name_column": "review_id",
+    "methods": ["spacy", "presidio"]
+}
