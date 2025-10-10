@@ -1,7 +1,4 @@
 {
-  "generic": {
-    "device": "auto"
-  },
   "model": {
     "explainability_mode": "greedy",
     "risk_model": "models/tri_pipelines/TAB/TRI_Pipeline",

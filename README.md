@@ -11,6 +11,8 @@ cd dpmlm
 pip install -r requirements.txt
 ```
 
+> For downloading Trustpilot dataset, please refer to the [Trustpilot dataset repository](https://www.kaggle.com/datasets/jerassy/trustpilot-reviews-123k/data) and save it as `data/trustpilot/trustpilot_reviews_2005.csv`.
+
 Initialize the PII detection submodule:
 
 ```bash

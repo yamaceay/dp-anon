@@ -1,3 +1,4 @@
 __pycache__
 *.pyc
 models
+data/trustpilot/trustpilot_reviews_2005.csv

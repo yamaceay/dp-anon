@@ -14,7 +14,6 @@ from typing import Optional, Dict, Any
 import dpmlm
 from dpmlm.config_utils import (
     DPMLM_GENERIC_KEYS,
-    DPMLM_RUNTIME_KEYS,
     coerce_dpmlm_config,
     prepare_dpmlm_model_config,
 )

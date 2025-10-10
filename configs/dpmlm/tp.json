@@ -1,0 +1,6 @@
+{
+  "model": {
+    "explainability_mode": "SHAP",
+    "risk_model": "models/tri_pipelines/trustpilot/TRI_Pipeline"
+  }
+}
