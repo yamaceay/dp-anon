@@ -8,12 +8,15 @@ interface for differential privacy text processing.
 import argparse
 import json
 import logging
+import os
 import sys
 from typing import Optional, Dict, Any
 
 from transformers import pipeline as hf_pipeline
 import torch
 from datasets import load_dataset
+from tqdm.auto import tqdm
+import numpy as np
 
 import dpmlm
 from dpmlm.config_utils import (
@@ -31,6 +34,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+device = (
+    "cuda" if torch.cuda.is_available()
+    else "mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available()
+    else "cpu"
+)
+
+TRI_PIPELINE_PATH = "models/tri_pipelines/trustpilot/www.amazon.com/TRI_Pipeline"
+OUTPUT_DIR = "outputs/trustpilot/www.amazon.com/dpmlm"
+DATASET_PATH = "data/trustpilot/www.amazon.com/train.json"
 
 def recode_text(text: str) -> str:
     """Decode escape sequences in text while preserving Unicode."""
@@ -91,29 +103,6 @@ def load_config_file(path: Optional[str]) -> Dict[str, Any]:
 def _filter_section(data: Dict[str, Any], allowed: set) -> Dict[str, Any]:
     return {key: value for key, value in data.items() if key in allowed}
 
-
-def _print_token_allocation(entry: Dict[str, Any]) -> None:
-    token_text = entry.get("token", "")
-    token_display = token_text.replace('\n', ' ').strip()
-    if len(token_display) > 30:
-        token_display = token_display[:27] + "..."
-    entity_fragment = ""
-    if entry.get("entity_type"):
-        entity_fragment = f" entity={entry['entity_type']}"
-
-    print(
-        "  #{rank:>2} [{start}-{end}] '{token}' weight={weight:.4g} "
-        "epsilon={epsilon:.4g} score={score:.4g}{entity}".format(
-            rank=entry.get("rank", 0),
-            start=entry.get("start"),
-            end=entry.get("end"),
-            token=token_display,
-            weight=entry.get("weight", 0.0),
-            epsilon=entry.get("epsilon", 0.0),
-            score=entry.get("score", 0.0),
-            entity=entity_fragment,
-        )
-    )
 
 def main() -> int:
     """Main entry point with improved architecture."""
@@ -217,8 +206,7 @@ def main() -> int:
     if mechanism_type == "dpmlm":
         structured = coerce_dpmlm_config(raw_config)
         generic_cfg = _filter_section(structured.get("generic", {}), DPMLM_GENERIC_KEYS)
-        if args.device:
-            generic_cfg["device"] = args.device
+        generic_cfg["device"] = args.device if args.device else device
         if args.seed is not None:
             generic_cfg["seed"] = args.seed
         if args.verbose:
@@ -227,7 +215,6 @@ def main() -> int:
         model_cfg = prepare_dpmlm_model_config(
             structured.get("model", {}),
             generic_cfg,
-            annotator_loader=lambda path: create_annotator(path, args.data_out),
         )
 
         config_for_factory = {
@@ -243,101 +230,143 @@ def main() -> int:
         if args.verbose:
             config_for_factory["verbose"] = True
 
-    try:
-        ### TODO: dependency injection for PETRE so that we can use our own re-identifier
-        # petre = PETRE(**config)
-        # petre.initialization()
-        # accuracy, ranks, docs_probs = petre.evaluate(max_rank=1)
-
-        if args.preset:
-            logger.info("Using preset configuration: %s", args.preset)
-            mechanism = dpmlm.create_from_preset(
-                args.preset,
-                override_config=config_for_factory,
-            )
-        else:
-            logger.info("Creating %s mechanism", mechanism_type)
-            mechanism = dpmlm.create_mechanism(
-                mechanism_type,
-                config=config_for_factory,
-            )
-
-        ds = load_dataset('csv', data_files={'train': "./bmark/trustpilot_reviews_2005.csv"})
-        text_to_process = ds['train'][0]['review']
-        text_to_process = recode_text(text_to_process)
-
-        logger.info("Applying differential privacy with epsilon=%.3f", args.epsilon)
-        result = mechanism.privatize(
-            text_to_process,
-            epsilon=args.epsilon,
+    if args.preset:
+        logger.info("Using preset configuration: %s", args.preset)
+        mechanism = dpmlm.create_from_preset(
+            args.preset,
+            override_config=config_for_factory,
+        )
+    else:
+        logger.info("Creating %s mechanism", mechanism_type)
+        mechanism = dpmlm.create_mechanism(
+            mechanism_type,
+            config=config_for_factory,
         )
 
-        print("\n" + "=" * 80)
-        print("DIFFERENTIAL PRIVACY TEXT PROCESSING RESULTS")
-        print("=" * 80)
-        print(f"Mechanism: {args.type}")
-        print(f"Epsilon: {args.epsilon}")
-        if args.type == "dpmlm":
-            model_section = config_for_factory.get("model", {})
-            explainability = (model_section.get("explainability_mode") or "uniform").lower()
-            pii_enabled = bool(model_section.get("annotator"))
-            print(f"Explainability mode: {explainability}")
-            print(f"PII annotation: {'Yes' if pii_enabled else 'No'}")
-        print()
+    dataset = load_dataset('json', data_files={'train': DATASET_PATH})['train']
+    texts = [recode_text(row['review']) for row in dataset]
+    review_ids = [str(row['review_id']) for row in dataset]
+    sorted_ids = sorted(set(review_ids))
+    name_to_label_idx = {name: idx for idx, name in enumerate(sorted_ids)}
+    target_labels = [name_to_label_idx[name] for name in review_ids]
 
-        print("Original text:")
-        print(repr(result.original_text))
-        print()
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-        print("Private text:")
-        print(repr(result.private_text))
-        print()
+    tri_pipeline = hf_pipeline(
+        "text-classification",
+        model=TRI_PIPELINE_PATH,
+        tokenizer=TRI_PIPELINE_PATH,
+        top_k=None,
+        device=device,
+        truncation=True,
+        max_length=512,
+    )
 
-        print("Statistics:")
-        print(f"  Perturbed tokens: {result.perturbed_tokens}/{result.total_tokens}")
-        print(f"  Perturbation rate: {result.perturbation_rate:.2%}")
+    initial_ranks = evaluate(tri_pipeline, texts, target_labels)
+    initial_ranks_file_path = f"{OUTPUT_DIR}/ranks_initial.csv"
+    np.savetxt(initial_ranks_file_path, initial_ranks, delimiter=",", fmt="%d")
+    logger.info("Initial ranks saved to %s", initial_ranks_file_path)
 
-        if result.added_tokens > 0 or result.deleted_tokens > 0:
-            print(f"  Added tokens: {result.added_tokens}")
-            print(f"  Deleted tokens: {result.deleted_tokens}")
+    anonymized_texts = []
+    for idx, text in enumerate(tqdm(texts, desc="Applying differential privacy")):
+        logger.info("Applying differential privacy with epsilon=%.3f", args.epsilon)
+        try:
+            anonymized_text = mechanism.privatize(
+                text,
+                epsilon=args.epsilon,
+            ).private_text
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.warning(
+                "Privatization failed for document %d; storing empty text. Error: %s",
+                idx,
+                exc,
+            )
+            anonymized_text = ""
+        anonymized_texts.append(anonymized_text)
 
-        if result.metadata:
-            token_allocations = result.metadata.get("token_allocations")
-            other_metadata = {
-                key: value
-                for key, value in result.metadata.items()
-                if key not in {"token_allocations"}
-            }
+    with open(f"{OUTPUT_DIR}/{args.type}_{args.epsilon}.json", "w", encoding="utf-8") as f:
+        for orig, anon in zip(texts, anonymized_texts):
+            json.dump({"original": orig, "anonymized": anon}, f)
+            f.write("\n")
 
-            if other_metadata:
-                print("Metadata:")
-                for key, value in other_metadata.items():
-                    print(f"  {key}: {value}")
+    ranks = evaluate(tri_pipeline, anonymized_texts, target_labels)
+    ranks_file_path = f"{OUTPUT_DIR}/ranks_{args.type}_{args.epsilon}.csv"
+    np.savetxt(ranks_file_path, ranks, delimiter=",", fmt="%d")
+    logger.info("Ranks saved to %s", ranks_file_path)
 
-            if token_allocations:
-                print("Token risk allocations:")
-                showed_token_allocations = token_allocations
-                truncate_results = len(token_allocations) >= 10
-                if truncate_results:
-                    showed_token_allocations = token_allocations[:5] + token_allocations[-5:]
+def evaluate(
+    tri_pipeline,
+    anonymized_texts,
+    target_labels,
+    batch_size: int = 128,
+) -> np.ndarray:
+    """Return the rank of each target label on its (possibly anonymized) counterpart."""
+    if len(anonymized_texts) != len(target_labels):
+        raise ValueError("target_labels length must match texts length")
 
-                for idx, entry in enumerate(showed_token_allocations):
-                    if truncate_results and idx == 5:
-                        print("  ...")
-                    _print_token_allocation(entry)
+    if len(anonymized_texts) == 0:
+        return np.empty(0, dtype=np.int32)
 
-        print("=" * 80)
+    empty_indices = {i for i, anon_text in enumerate(anonymized_texts) if not anon_text.strip()}
+    eval_indices = [i for i in range(len(anonymized_texts)) if i not in empty_indices]
+    eval_texts = [anonymized_texts[i] for i in eval_indices]
 
-    except (ImportError, ValueError, FileNotFoundError) as exc:
-        logger.error("Error processing text: %s", exc)
-        if args.verbose:
-            import traceback
+    if eval_texts:
+        predictions = tri_pipeline(eval_texts, batch_size=batch_size)
+    else:
+        predictions = []
 
-            traceback.print_exc()
-        return 1
+    if not isinstance(predictions, list):
+        predictions = [predictions]
 
-    return 0
+    config = getattr(tri_pipeline, "model", None)
+    config = getattr(config, "config", None)
+    id2label_conf = {}
+    if config is not None:
+        raw_mapping = getattr(config, "id2label", {}) or {}
+        for key, value in raw_mapping.items():
+            try:
+                idx = int(key)
+            except (TypeError, ValueError):
+                try:
+                    idx = int(str(value).split("_")[-1])
+                except (TypeError, ValueError):
+                    continue
+            id2label_conf[idx] = value
 
+    def label_name(label_idx):
+        if isinstance(label_idx, str):
+            if label_idx in id2label_conf.values():
+                return label_idx
+            try:
+                numeric = int(label_idx)
+            except ValueError:
+                return label_idx
+            return id2label_conf.get(numeric, f"LABEL_{numeric}")
+        if isinstance(label_idx, int):
+            return id2label_conf.get(label_idx, f"LABEL_{label_idx}")
+        raise TypeError(f"Unsupported label type: {type(label_idx)}")
+
+    ranks = np.full(len(anonymized_texts), -1, dtype=np.int32)
+    total_labels = len(id2label_conf)
+    if not total_labels:
+        label2id_conf = getattr(getattr(tri_pipeline.model, "config", None), "label2id", {}) or {}
+        total_labels = len(label2id_conf)
+    for pred_idx, doc_idx in enumerate(eval_indices):
+        priv_pred = predictions[pred_idx]
+        priv_outputs = priv_pred if isinstance(priv_pred, list) else [priv_pred]
+        if not priv_outputs:
+            continue
+
+        target_label = label_name(target_labels[doc_idx])
+        rank_lookup = {entry["label"]: position + 1 for position, entry in enumerate(priv_outputs)}
+        default_rank = total_labels + 1 if total_labels else len(priv_outputs) + 1
+        ranks[doc_idx] = rank_lookup.get(target_label, default_rank)
+
+    for idx in empty_indices:
+        logger.info("Skipping empty anonymized text at index %d", idx)
+
+    return ranks
 
 if __name__ == "__main__":
     sys.exit(main())

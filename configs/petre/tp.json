@@ -4,7 +4,7 @@
     "individual_name_column": "review_id",
     "original_text_column": "review",
     "starting_anonymization_path":"outputs/trustpilot/www.amazon.com/spacy.json",
-    "tri_pipeline_path":"models/tri_pipelines/trustpilot/TRI_Pipeline",
+    "tri_pipeline_path":"models/tri_pipelines/trustpilot/www.amazon.com/TRI_Pipeline",
     "ks":[2,3,5,7,10],
     "mask_text":"[MASK]",
     "use_mask_all_instances":false,

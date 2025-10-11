@@ -1,0 +1,6 @@
+{
+  "model": {
+    "explainability_mode": "greedy",
+    "risk_model": "models/tri_pipelines/trustpilot/www.amazon.com/TRI_Pipeline"
+  }
+}

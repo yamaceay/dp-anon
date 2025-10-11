@@ -533,7 +533,7 @@ class PETRE():
         
         # Compute and store new ranks
         accuracy, ranks, docs_probs = self.evaluate(max_rank=1)
-        ranks_file_path = os.path.join(self.output_folder_path, f'Ranks_k={k}.csv')
+        ranks_file_path = os.path.join(self.output_folder_path, f'ranks_k={k}.csv')
         ranks.tofile(ranks_file_path, sep=",")
 
         if verbose: logging.info(f"Total number of steps = {total_n_steps}")

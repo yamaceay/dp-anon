@@ -1,5 +1,5 @@
 {
-    "output_folder_path": "models/tri_pipelines/trustpilot",
+    "output_folder_path": "models/tri_pipelines/trustpilot/www.amazon.com",
     "data_file_path": "data/trustpilot/www.amazon.com/train.json",
     "annotation_folder_path": "outputs/trustpilot/www.amazon.com",
     "annotation_mask_token": "[MASK]",
