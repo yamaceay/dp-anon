@@ -8,9 +8,6 @@ import ntpath
 import time
 import logging
 import argparse
-import tempfile
-import shutil
-from pathlib import Path
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO) # Configure logging
 
 from tqdm.autonotebook import tqdm
@@ -20,19 +17,14 @@ import en_core_web_lg # This model is leveraged for every spaCy usage (https://s
 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import Dataset, Subset
+from torch.utils.data import Dataset
 from transformers import pipeline, Pipeline
 import datasets
 import shap
-import concurrent
 from collections import OrderedDict
-from typing import Dict, Iterable, List, Optional, Sequence, Set
+from typing import Dict, List, Optional, Sequence
 
-from loaders import DatasetAdapter, get_adapter
-from loaders.base import DatasetRecord
-from dpmlm.interfaces import PrivacyResult
-from presets import PETRE_PRESETS, get_petre_preset
-from dpmlm.config_utils import resolve_device
+from presets import get_petre_preset
 
 #endregion
 
@@ -162,8 +154,20 @@ class PETRE():
     #region ################### Run all blocks ###################
 
     def run(self, verbose=True):
+        return self.privatize(verbose=verbose)
+
+    def privatize(self, ks: Optional[Sequence[int]] = None, verbose: bool = True):
+        """Run PETRE for the provided k values and return anonymised texts."""
+        k_values = [int(k) for k in (ks if ks is not None else self.ks or [])]
+        if not k_values:
+            raise ValueError("No k values provided for PETRE privatization.")
+
+        snapshots = OrderedDict()
         self.initialization(verbose=verbose)
-        self.incremental_execution(verbose=verbose)
+        for current_k in k_values:
+            snapshot = self.petre(int(current_k), plot_explanations=False, verbose=verbose)
+            snapshots[int(current_k)] = snapshot
+        return snapshots
 
     #endregion
 
@@ -272,11 +276,11 @@ class PETRE():
 
         # Incrementing k
         for current_k in self.ks:
-            if verbose: logging.debug(F"#### START: PETRE WITH K={current_k} ####")
-            
-            self.petre(current_k, plot_explanations=False, verbose=True) # TODO: Check this verbose            
+            if verbose: logging.debug(f"#### START: PETRE WITH K={current_k} ####")
 
-            if verbose: logging.debug(F"#### END: PETRE WITH K={current_k} ####")
+            self.petre(current_k, plot_explanations=False, verbose=verbose)
+
+            if verbose: logging.debug(f"#### END: PETRE WITH K={current_k} ####")
 
         if verbose: logging.debug("######### END: EXECUTION #########")
 
@@ -525,11 +529,13 @@ class PETRE():
                         doc_processed = True
                         pbar.update()
 
-                        # Store updated annotations
-                        annotations = self.dataset.get_annotations()
-                        with open(annotations_file_path, 'w') as f:
-                            json.dump(annotations, f)           
-        
+        # Store updated annotations
+        annotations = self.dataset.get_annotations()
+        with open(annotations_file_path, 'w', encoding='utf-8') as f:
+            json.dump(annotations, f)
+
+        snapshot = self._write_anonymized_snapshot(k)
+
         # Compute and store new ranks
         accuracy, ranks, docs_probs = self.evaluate(max_rank=1)
         ranks_file_path = os.path.join(self.output_folder_path, f'ranks_k={k}.csv')
@@ -537,7 +543,38 @@ class PETRE():
 
         if verbose: logging.debug(f"Total number of steps = {total_n_steps}")
 
-        return annotations, total_n_steps
+        return snapshot
+
+    def _apply_spans(self, text: str, spans: List[List[int]]) -> str:
+        mask = self.mask_text or "[MASK]"
+        masked_text = text
+        for start, end in sorted(spans, key=lambda span: span[0], reverse=True):
+            if 0 <= start < end <= len(masked_text):
+                masked_text = masked_text[:start] + mask + masked_text[end:]
+        return masked_text
+
+    def _build_anonymized_snapshot(self) -> "OrderedDict[str, Dict[str, object]]":
+        annotations = self.dataset.get_annotations(disable_tqdm=True)
+        snapshot: "OrderedDict[str, Dict[str, object]]" = OrderedDict()
+        for document in self.dataset:
+            label = document["label"]
+            uid = self.label_to_name[label]
+            original_text = document["text"]
+            spans = annotations.get(uid, [])
+            anonymized_text = self._apply_spans(original_text, spans)
+            snapshot[uid] = {
+                "original": original_text,
+                "anonymized": anonymized_text,
+                "perturbed_tokens": len(spans),
+            }
+        return snapshot
+
+    def _write_anonymized_snapshot(self, k: int) -> "OrderedDict[str, Dict[str, object]]":
+        snapshot = self._build_anonymized_snapshot()
+        output_path = os.path.join(self.output_folder_path, f"petre_texts_k={k}.json")
+        with open(output_path, "w", encoding="utf-8") as handle:
+            json.dump(snapshot, handle, ensure_ascii=False, indent=2)
+        return snapshot
 
     def mask_most_disclosive_term(self, document:dict, splits_probs:torch.tensor, annotated_terms:dict, plot_explanations:bool=False):
         n_masked_terms = 0
@@ -938,343 +975,49 @@ class PETREDataset(Dataset):
 
 #endregion
 
-#region ###################################### Simple benchmarking helpers ######################################
-
-_PETRE_NLP = None
-
-
-def _get_spacy_nlp():
-    global _PETRE_NLP
-    if _PETRE_NLP is None:
-        _PETRE_NLP = en_core_web_lg.load()
-    return _PETRE_NLP
-
-
-def _infer_dataset_name(
-    provided: Optional[str],
-    records: Iterable[DatasetRecord],
-    risk_pipeline: Pipeline,
-) -> str:
-    if provided:
-        return provided.lower()
-
-    pipeline_name = ""
-    model = getattr(risk_pipeline, "model", None)
-    if model is not None:
-        pipeline_name = getattr(model, "name_or_path", "") or ""
-
-    lowered = pipeline_name.lower()
-    for preset_name in PETRE_PRESETS:
-        if preset_name in lowered:
-            return preset_name
-
-    # Fallback: try to infer from record metadata
-    first_record = next(iter(records), None)
-    if first_record and first_record.metadata:
-        metadata_values = [str(value).lower() for value in first_record.metadata.values() if isinstance(value, str)]
-        for preset_name in PETRE_PRESETS:
-            if any(preset_name in value for value in metadata_values):
-                return preset_name
-
-    raise ValueError("Unable to infer dataset preset for PETRE. Please specify dataset_name explicitly.")
-
-
-def _build_privacy_results_from_petre(
-    petre_instance: "PETRE",
-    target_uids: Set[str],
-    *,
-    current_k: int,
-) -> Dict[str, PrivacyResult]:
-    annotations = petre_instance.dataset.get_annotations(disable_tqdm=True)
-    mask_text = petre_instance.mask_text
-    tokenizer = petre_instance.dataset.spacy_nlp
-
-    results: Dict[str, PrivacyResult] = {}
-
-    for document in petre_instance.dataset:
-        label = document["label"]
-        uid = str(petre_instance.label_to_name[label])
-        if target_uids and uid not in target_uids:
-            continue
-
-        original_text = document["text"]
-        private_text = original_text
-        spans = annotations.get(uid, [])
-        for start, end in sorted(spans, key=lambda span: span[0], reverse=True):
-            private_text = private_text[:start] + mask_text + private_text[end:]
-
-        if tokenizer is not None:
-            total_tokens = len(tokenizer(original_text))
-        else:
-            total_tokens = len(original_text.split())
-
-        result = PrivacyResult(
-            original_text=original_text,
-            private_text=private_text,
-            perturbed_tokens=len(spans),
-            total_tokens=total_tokens,
-        )
-        result.metadata = {
-            "mechanism": "petre",
-            "uid": uid,
-            "k": int(current_k),
-            "ks": list(getattr(petre_instance, "ks", [])),
-        }
-        results[uid] = result
-
-    return results
-
-
-def _pipeline_device_id(device: str) -> int:
-    if device == "cuda":
-        return 0
-    if device == "mps":
-        return 0
-    return -1
-
-
-def privatize_all(
-    records: Iterable[DatasetRecord],
-    risk_pipeline: Pipeline,
-    *,
-    dataset_name: Optional[str] = None,
-    mask_text: Optional[str] = None,
-    ks: Optional[Sequence[int]] = None,
-    entity_labels: Optional[Sequence[str]] = None,  # Reserved for future compatibility
-) -> "OrderedDict[int, List[PrivacyResult]]":
-    """Run PETRE progressively for each k and return ordered privacy results."""
-
-    records = list(records)
-    if not records:
-        return OrderedDict()
-
-    inferred_dataset = _infer_dataset_name(dataset_name, records, risk_pipeline)
-    config = get_petre_preset(inferred_dataset).copy()
-
-    if mask_text is not None:
-        config["mask_text"] = mask_text
-
-    ks_sequence = list(map(int, ks)) if ks else list(map(int, config.get("ks", [])))
-    if not ks_sequence:
-        raise ValueError("PETRE requires at least one k value to run.")
-
-    temp_output = tempfile.mkdtemp(prefix="petre_priv_")
-    config["output_base_folder_path"] = temp_output
-
-    petre_instance = PETRE(**config)
-    if mask_text is not None:
-        petre_instance.mask_text = mask_text
-
-    petre_instance.tri_pipeline = risk_pipeline
-
-    results_by_k: "OrderedDict[int, List[PrivacyResult]]" = OrderedDict()
-
-    try:
-        petre_instance.initialization(verbose=False)
-        target_uids = {str(record.uid) for record in records}
-
-        for current_k in ks_sequence:
-            petre_instance.petre(int(current_k), plot_explanations=False, verbose=False)
-            results_map = _build_privacy_results_from_petre(
-                petre_instance,
-                target_uids,
-                current_k=int(current_k),
-            )
-
-            ordered_results: List[PrivacyResult] = []
-            for record in records:
-                uid = str(record.uid)
-                result = results_map.get(uid)
-                if result is None:
-                    raise ValueError(
-                        f"PETRE did not produce an output for uid '{uid}' at k={current_k}. "
-                        "Ensure the dataset preset matches the loader records."
-                    )
-                ordered_results.append(result)
-
-            results_by_k[int(current_k)] = ordered_results
-    finally:
-        shutil.rmtree(temp_output, ignore_errors=True)
-
-    return results_by_k
-
-
-def _build_adapter(dataset: str, args: argparse.Namespace) -> DatasetAdapter:
-    kwargs: Dict[str, object] = {"max_records": args.max_records}
-    key = dataset.lower()
-    if key == "trustpilot":
-        if args.dataset_path:
-            kwargs["data_path"] = args.dataset_path
-    elif key == "tab":
-        if args.dataset_path:
-            kwargs["data_path"] = args.dataset_path
-    elif key in {"db_bio", "db-bio"}:
-        if args.dataset_path:
-            kwargs["root"] = args.dataset_path
-        kwargs["split"] = args.split
-    else:
-        raise ValueError(f"Unsupported dataset '{dataset}'.")
-    return get_adapter(dataset, **kwargs)
-
-
-def run_mask_command(args: argparse.Namespace) -> int:
-    device = resolve_device(args.device)
-    risk_pipeline = pipeline(
-        "text-classification",
-        model=args.risk_model,
-        tokenizer=args.risk_model,
-        device=_pipeline_device_id(device),
-        top_k=None,
-        truncation=True,
-        max_length=512,
-    )
-
-    adapter = _build_adapter(args.dataset, args)
-    records = list(adapter.iter_records())
-
-    labels = [label.strip() for label in args.entity_labels.split(",")] if args.entity_labels else None
-    results_by_k = privatize_all(
-        records,
-        risk_pipeline,
-        dataset_name=args.dataset,
-        mask_text=args.mask_text,
-        ks=None,
-        entity_labels=labels,
-    )
-
-    if not results_by_k:
-        logging.warning("PETRE produced no outputs.")
-        return 0
-
-    last_k, final_results = next(reversed(results_by_k.items()))
-
-    output_dir = Path(args.output_dir) / args.dataset.lower()
-    if args.split:
-        output_dir = output_dir / args.split
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / "petre_results.jsonl"
-
-    with output_path.open("w", encoding="utf-8") as handle:
-        for record, result in zip(records, final_results):
-            key = str(record.uid)
-            handle.write(
-                json.dumps(
-                    {
-                        "uid": key,
-                        "original": record.text,
-                        "petre": result.private_text if result else "",
-                        "petre_metadata": result.metadata if result else {},
-                        "metadata": record.metadata,
-                    },
-                    ensure_ascii=False,
-                )
-            )
-            handle.write("\n")
-
-    logging.debug("PETRE anonymised %d records at k=%s -> %s", len(records), last_k, output_path)
-    return 0
-
-
-def build_cli_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="PETRE anonymisation utilities")
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Enable verbose/debug logging.",
-    )
-    parser.add_argument(
-        "legacy_target",
-        nargs="?",
-        help=argparse.SUPPRESS,
-    )
-
-    subparsers = parser.add_subparsers(dest="command")
-
-    run_parser = subparsers.add_parser("run", help="Run PETRE with a preset or config file.")
-    run_parser.add_argument(
-        "target",
-        nargs="?",
-        help="Preset name (trustpilot, tab, ...) or path to a PETRE JSON config.",
-    )
-
-    mask_parser = subparsers.add_parser("mask", help="Mask a dataset using PETRE via loader adapters.")
-    mask_parser.add_argument("--dataset", required=True, help="Dataset name (trustpilot, tab, db_bio).")
-    mask_parser.add_argument("--risk-model", required=True, help="Path to the TRI/risk model directory.")
-    mask_parser.add_argument("--dataset-path", default=None, help="Override dataset path/root.")
-    mask_parser.add_argument("--split", default="train", help="Dataset split if applicable.")
-    mask_parser.add_argument("--max-records", type=int, default=None, help="Limit records processed.")
-    mask_parser.add_argument("--mask-text", default=None, help="Override mask token.")
-    mask_parser.add_argument(
-        "--entity-labels",
-        default=None,
-        help="Comma-separated spaCy entity labels to anonymise (default: PERSON,ORG,GPE,LOC,NORP,FAC).",
-    )
-    mask_parser.add_argument(
-        "--output-dir",
-        default="outputs/petre",
-        help="Directory for JSONL results.",
-    )
-    mask_parser.add_argument(
-        "--device",
-        default="auto",
-        help="Device preference for risk pipeline (auto, cpu, cuda, mps).",
-    )
-    mask_parser.add_argument(
-        "--seed",
-        type=int,
-        default=None,
-        help="Optional random seed (for parity).",
-    )
-
-    return parser
-
-
-def parse_cli_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    parser = build_cli_parser()
-    args = parser.parse_args(argv)
-
-    if args.command == "run":
-        if not args.target:
-            parser.error("Please provide a preset name or path to a PETRE JSON config.")
-    elif args.command == "mask":
-        pass
-    else:
-        if getattr(args, "legacy_target", None):
-            args.command = "run"
-            args.target = str(args.legacy_target)
-        else:
-            parser.error("No command provided. Use 'run' or 'mask'.")
-
-    return args
-
-#endregion
 
 #region ###################################### Main CLI ######################################
 
+def parse_arguments(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run the PETRE anonymization pipeline.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--preset", help="Preset configuration name (e.g. trustpilot).")
+    group.add_argument("--config", help="Path to a PETRE JSON configuration file.")
+    parser.add_argument(
+        "--ks",
+        type=str,
+        help="Comma-separated list of k values to evaluate (defaults to config ks).",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose logging.",
+    )
+    return parser.parse_args(argv)
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    args = parse_cli_args(argv)
+    args = parse_arguments(argv)
 
     logging.getLogger().setLevel(logging.DEBUG if args.verbose else logging.INFO)
 
-    if args.command == "mask":
-        return run_mask_command(args)
-
-    target = str(args.target) if args.target is not None else None
-    logging.info("######### START: CONFIGURATION #########")
-
-    if target and target.endswith(".json"):
-        config = get_config_from_file(target)
+    if args.config:
+        config = get_config_from_file(args.config)
     else:
-        try:
-            config = get_petre_preset(target)
-        except ValueError as exc:
-            logging.error(str(exc))
-            raise SystemExit(1) from exc
+        config = get_petre_preset(args.preset)
+
+    if args.ks:
+        ks = [int(token.strip()) for token in args.ks.split(",") if token.strip()]
+        ks.sort()
+        config["ks"] = ks
 
     petre = PETRE(**config)
-    logging.info("######### END: CONFIGURATION #########")
+    snapshots = petre.privatize(verbose=args.verbose)
 
-    petre.run(verbose=args.verbose)
+    for k in snapshots:
+        output_path = os.path.join(petre.output_folder_path, f"petre_texts_k={k}.json")
+        logging.info("PETRE anonymised texts for k=%s saved to %s", k, output_path)
+
     return 0
 
 
