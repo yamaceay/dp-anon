@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
-"""Standalone annotation generator - no TRI dependencies."""
+"""Standalone annotation generator using loader adapters."""
 
+from __future__ import annotations
+
+import argparse
 import json
 import os
-import pandas as pd
-from typing import Dict, Any, List, Tuple
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+
 from tqdm import tqdm
+
+from loaders import DatasetAdapter, get_adapter
+from loaders.base import DatasetRecord
 
 try:
     import en_core_web_lg
@@ -49,8 +57,8 @@ class StandaloneAnnotationGenerator:
             except Exception:
                 pass
 
-        self.manual_annotations = None
-    
+        self.manual_annotations: Optional[Dict[str, List[Dict[str, object]]]] = None
+
     def get_available_methods(self) -> Dict[str, Dict[str, Any]]:
         methods = {
             "spacy": {
@@ -71,23 +79,21 @@ class StandaloneAnnotationGenerator:
             methods["spacy"]["error"] = "spaCy not available"
         if not methods["presidio"]["available"]:
             methods["presidio"]["error"] = "Presidio not available"
-        
         return methods
-    
-    def generate_spacy_annotations(self, data: list, text_column: str, id_column: str, name_column: str) -> Tuple[Dict[str, List], Dict[str, Any]]:
+
+    def generate_spacy_annotations(self, records: Iterable[DatasetRecord]) -> Tuple[Dict[str, List], Dict[str, Any]]:
         if not self.spacy_nlp:
             raise RuntimeError("spaCy not available")
-        
+
         annotations = {}
         total_spans = 0
         documents_with_annotations = 0
-        
-        
-        for row in tqdm(data, desc="Processing with spaCy", unit="docs"):
-            doc_id = str(row[id_column])
-            text = str(row[text_column])
-            name = get_name(row, name_column)
-            key = name if name is not None else doc_id
+
+        records_list = list(records)
+
+        for record in tqdm(records_list, desc="Processing with spaCy", unit="docs"):
+            key = str(record.uid)
+            text = record.text or ""
 
             doc = self.spacy_nlp(text)
             entities = []
@@ -99,36 +105,35 @@ class StandaloneAnnotationGenerator:
                     "label": ent.label_,
                     "confidence": 1.0
                 })
-            
+
             if entities:
                 annotations[key] = entities
                 documents_with_annotations += 1
                 total_spans += len(entities)
-        
+
         stats = {
-            "total_documents": len(data),
+            "total_documents": len(records_list),
             "documents_with_annotations": documents_with_annotations,
             "total_spans": total_spans,
-            "coverage": documents_with_annotations / len(data) if len(data) > 0 else 0,
+            "coverage": documents_with_annotations / len(records_list) if len(records_list) > 0 else 0,
             "average_spans_per_document": total_spans / documents_with_annotations if documents_with_annotations > 0 else 0
         }
-        
+
         return annotations, stats
 
-    def generate_presidio_annotations(self, data: list, text_column: str, id_column: str, name_column: str) -> Tuple[Dict[str, List], Dict[str, Any]]:
+    def generate_presidio_annotations(self, records: Iterable[DatasetRecord]) -> Tuple[Dict[str, List], Dict[str, Any]]:
         if not self.presidio_analyzer:
             raise RuntimeError("Presidio not available")
-        
+
         annotations = {}
         total_spans = 0
         documents_with_annotations = 0
-        
-        
-        for row in tqdm(data, desc="Processing with Presidio", unit="docs"):
-            doc_id = str(row[id_column])
-            text = str(row[text_column])
-            name = get_name(row, name_column)
-            key = name if name is not None else doc_id
+
+        records_list = list(records)
+
+        for record in tqdm(records_list, desc="Processing with Presidio", unit="docs"):
+            key = str(record.uid)
+            text = record.text or ""
 
             results = self.presidio_analyzer.analyze(text=text, language='en')
             entities = []
@@ -140,57 +145,51 @@ class StandaloneAnnotationGenerator:
                     "label": result.entity_type,
                     "confidence": result.score
                 })
-            
+
             if entities:
                 annotations[key] = entities
                 documents_with_annotations += 1
                 total_spans += len(entities)
-        
+
         stats = {
-            "total_documents": len(data),
+            "total_documents": len(records_list),
             "documents_with_annotations": documents_with_annotations,
             "total_spans": total_spans,
-            "coverage": documents_with_annotations / len(data) if len(data) > 0 else 0,
+            "coverage": documents_with_annotations / len(records_list) if len(records_list) > 0 else 0,
             "average_spans_per_document": total_spans / documents_with_annotations if documents_with_annotations > 0 else 0
         }
-        
+
         return annotations, stats
 
-    def generate_manual_annotations(self, data: list, id_column: str, name_column: str, annotation_column: str) -> None:
-        """Load user-provided manual annotations."""
-        manual_annotations_dict = {}
-        for row in data:
-            doc_id = str(row[id_column])
-            name = get_name(row, name_column)
-            key = name if name is not None else doc_id
-            all_annotations = row[annotation_column]
-            if all_annotations:
-                found_entities = []
-                for annotator, annotations in all_annotations.items():
-                    for entity in annotations['entity_mentions']:
-                        
-                        span_text = entity.get("span_text") or entity.get("span_ext", "")
-                        
-                        entity_processed = {
-                            "start": entity["start_offset"],
-                            "end": entity["end_offset"],
-                            "text": span_text,
-                            "label": entity["entity_type"],
-                            "confidence": 1.0,
-                            "confidential_status": entity.get("confidential_status", "UNKNOWN"),
-                            "identifier_type": entity.get("identifier_type", "UNKNOWN"),
-                            "annotator": annotator,
-                        }
-                        found_entities.append(entity_processed)
-            manual_annotations_dict[key] = sorted(found_entities, key=lambda x: x["start"])
+    def generate_manual_annotations(
+        self,
+        manual_data: Dict[str, Sequence[Dict[str, object]]],
+    ) -> Tuple[Dict[str, List], Dict[str, float]]:
+        manual_annotations_dict: Dict[str, List[Dict[str, object]]] = {}
+
+        for doc_id, entities in manual_data.items():
+            entities_sorted = sorted(
+                (
+                    {
+                        "start": ent.get("start") or ent.get("start_offset", 0),
+                        "end": ent.get("end") or ent.get("end_offset", 0),
+                        "text": ent.get("text") or ent.get("span_text") or ent.get("span_ext", ""),
+                        "label": ent.get("label") or ent.get("entity_type", "UNKNOWN"),
+                        "confidence": float(ent.get("confidence", 1.0)),
+                    }
+                    for ent in entities
+                ),
+                key=lambda x: x["start"],
+            )
+            manual_annotations_dict[str(doc_id)] = entities_sorted
 
         documents_with_annotations = sum(1 for anns in manual_annotations_dict.values() if anns)
         total_spans = sum(len(anns) for anns in manual_annotations_dict.values())
         stats = {
-            "total_documents": len(data),
+            "total_documents": len(manual_annotations_dict),
             "documents_with_annotations": documents_with_annotations,
             "total_spans": total_spans,
-            "coverage": documents_with_annotations / len(data) if len(data) > 0 else 0,
+            "coverage": documents_with_annotations / len(manual_annotations_dict) if manual_annotations_dict else 0,
             "average_spans_per_document": (total_spans / documents_with_annotations
                                             if documents_with_annotations > 0 else 0),
         }
@@ -202,184 +201,151 @@ class StandaloneAnnotationGenerator:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(annotations, f, indent=indent, ensure_ascii=False)
 
-def get_name(row, name_column):
-    if not name_column:
-        return None
-    name_column_deep = name_column.split('.')
-    val = row
-    for col in name_column_deep:
-        val = val.get(col, {})
-    return val if isinstance(val, str) else None
-
-def read_from_config_file(config_path: str) -> Dict[str, Any]:
-    empty_config = {
-        "input_file": None,
-        "output_dir": None,
-        "id_column": None,
-        "text_column": None,
-        "annotation_column": None,
-        "name_column": None,
-        "methods": [],
-        "all_methods": False,
-        "include_other": False,
-        "force_regenerate": False,
-        "output_stats": False,
-    }
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
-
-    required_keys = ["input_file", "output_dir", "id_column", "text_column"]
-    for key in required_keys:
-        if key not in config:
-            raise ValueError(f"Missing required configuration key: {key}")
-    
-    if "annotation_column" not in config and config.get("method") == "manual":
-        raise ValueError("annotation_column is required for manual method")
-    
-    if "methods" not in config and not config.get("all_methods", False):
-        raise ValueError("Either methods or all_methods must be specified")
-
-    for key, value in empty_config.items():
-        if key not in config:
-            config[key] = value
-
-    return config
-
-def main():
-    import argparse
-    import sys
-
-    parser = argparse.ArgumentParser(description="Generate annotations for dataset")
-    parser.add_argument("config", type=str,
-                        help="Path to JSON configuration file (not used in standalone mode)")
-    
-    args = parser.parse_args()
-    config = read_from_config_file(args.config)
-    args = argparse.Namespace(**config)
-
-    try:
-        if args.input_file.endswith('.json'):
-            with open(args.input_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        else:
-            print(f"Unsupported file format: {args.input_file}")
-            sys.exit(1)
-
-        print(f"Loaded {len(data)} documents from {args.input_file}")
-    except Exception as e:
-        print(f"Error loading dataset: {e}")
-        sys.exit(1)
-    
-    columns = list(data[0].keys()) if data else []
-
-    
-    if args.id_column not in columns:
-        print(f"Error: ID column '{args.id_column}' not found. Available: {list(columns)}")
-        sys.exit(1)
-    if args.text_column not in columns:
-        print(f"Error: Text column '{args.text_column}' not found. Available: {list(columns)}")
-        sys.exit(1)
-    if "manual" in args.methods and args.annotation_column and args.annotation_column not in columns:
-        print(f"Error: Annotation column '{args.annotation_column}' not found. Available: {list(columns)}")
-        sys.exit(1)
-
-    
-    os.makedirs(args.output_dir, exist_ok=True)
-    print(f"Using annotation folder: {args.output_dir}")
-    
-    
-    if args.all_methods:
-        methods_to_generate = ["spacy", "presidio", "manual"]
-    elif args.methods:
-        methods_to_generate = args.methods
+def _build_adapter(dataset: str, args: argparse.Namespace) -> DatasetAdapter:
+    kwargs: Dict[str, object] = {"max_records": args.max_records}
+    key = dataset.lower()
+    if key == "trustpilot":
+        if args.dataset_path:
+            kwargs["data_path"] = args.dataset_path
+    elif key == "tab":
+        if args.dataset_path:
+            kwargs["data_path"] = args.dataset_path
+    elif key in {"db_bio", "db-bio"}:
+        if args.dataset_path:
+            kwargs["root"] = args.dataset_path
+        kwargs["split"] = args.split
     else:
-        methods_to_generate = []
-    
-    print(f"Generating annotations for methods: {methods_to_generate}")
-    
-    
+        raise ValueError(f"Unsupported dataset '{dataset}'.")
+    return get_adapter(dataset, **kwargs)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Generate annotation spans using loader datasets.")
+    parser.add_argument("--dataset", required=True, help="Dataset name (trustpilot, tab, db_bio).")
+    parser.add_argument("--dataset-path", default=None, help="Override dataset root/path.")
+    parser.add_argument("--split", default="train", help="Dataset split (if applicable).")
+    parser.add_argument("--max-records", type=int, default=None, help="Limit number of records.")
+    parser.add_argument(
+        "--methods",
+        nargs="+",
+        default=("spacy",),
+        help="Annotation methods to run (spacy, presidio, manual).",
+    )
+    parser.add_argument(
+        "--manual-file",
+        default=None,
+        help="Path to manual annotations JSON ({uid: [ spans ]}).",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="outputs/annotations",
+        help="Directory to write annotation files.",
+    )
+    parser.add_argument(
+        "--include-other",
+        action="store_true",
+        help="Store full span metadata rather than offsets only.",
+    )
+    parser.add_argument(
+        "--force-regenerate",
+        action="store_true",
+        help="Overwrite existing annotation files.",
+    )
+    parser.add_argument(
+        "--output-stats",
+        action="store_true",
+        help="Print method statistics.",
+    )
+    return parser.parse_args()
+
+
+def filter_to_offsets(annotations: Dict[str, List[Dict[str, object]]]) -> Dict[str, List[Tuple[int, int]]]:
+    filtered: Dict[str, List[Tuple[int, int]]] = {}
+    for doc_id, entities in annotations.items():
+        offsets: List[Tuple[int, int]] = []
+        prev_start, prev_end = -1, -1
+        for ent in entities:
+            start = int(ent.get("start", 0))
+            end = int(ent.get("end", 0))
+            if prev_start <= start < prev_end:
+                continue
+            offsets.append((start, end))
+            prev_start, prev_end = start, end
+        filtered[doc_id] = offsets
+    return filtered
+
+
+def main() -> None:
+    args = parse_args()
+
+    adapter = _build_adapter(args.dataset, args)
+    records = list(adapter.iter_records())
+    print(f"Loaded {len(records)} records from dataset '{args.dataset}'.")
+
     generator = StandaloneAnnotationGenerator()
-    
-    
     available_methods = generator.get_available_methods()
-    print("Available annotation methods:")
-    for method, info in available_methods.items():
-        status = "✓" if info["available"] else "✗"
-        print(f"  {status} {method}: {info['description']}")
-        if not info["available"] and "error" in info:
-            print(f"    Error: {info['error']}")
-    
-    
-    total_generated = 0
-    
-    
-    method_progress = tqdm(methods_to_generate, desc="Generating annotations", unit="method")
-    
-    for method in method_progress:
-        method_progress.set_description(f"Generating {method} annotations")
-        annotation_file = os.path.join(args.output_dir, f"{method}.json")
-        
-        if os.path.exists(annotation_file) and not args.force_regenerate:
-            print(f"Skipping {method} - annotations already exist")
+
+    requested_methods = [method.lower() for method in args.methods]
+    results_generated = 0
+
+    output_dir = Path(args.output_dir) / args.dataset.lower()
+    if args.split:
+        output_dir = output_dir / args.split
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Writing annotations to: {output_dir}")
+
+    for method in requested_methods:
+        if method not in available_methods:
+            print(f"Unknown method '{method}'. Skipping.")
             continue
-            
+
+        info = available_methods[method]
+        if not info["available"] and method != "manual":
+            print(f"Method '{method}' unavailable: {info.get('error', 'dependency missing')}")
+            continue
+
+        output_file = output_dir / f"{method}.json"
+        if output_file.exists() and not args.force_regenerate:
+            print(f"Skipping {method}: {output_file} already exists.")
+            continue
+
         print(f"\nGenerating {method} annotations...")
-        
         try:
             if method == "spacy":
-                method_annotations, stats = generator.generate_spacy_annotations(
-                    data, args.text_column, args.id_column, args.name_column
-                )
+                annotations, stats = generator.generate_spacy_annotations(records)
             elif method == "presidio":
-                method_annotations, stats = generator.generate_presidio_annotations(
-                    data, args.text_column, args.id_column, args.name_column
-                )
+                annotations, stats = generator.generate_presidio_annotations(records)
             elif method == "manual":
-                method_annotations, stats = generator.generate_manual_annotations(
-                    data, args.id_column, args.name_column, args.annotation_column
-                )
-            elif method == "ner7":
-                print("NER7 is not supported in standalone mode.")
-                continue
+                if not args.manual_file:
+                    print("Manual method requires --manual-file pointing to JSON data.")
+                    continue
+                with open(args.manual_file, "r", encoding="utf-8") as handle:
+                    manual_data = json.load(handle)
+                annotations, stats = generator.generate_manual_annotations(manual_data)
             else:
-                print(f"Unknown method: {method}")
+                print(f"Method '{method}' not supported.")
                 continue
 
             if not args.include_other:
-                print("Filtering to only offsets...")
-                data_with_offsets = {}
-                for doc_id, entities in method_annotations.items():
-                    offsets = []
-                    prev_offset = (-1, -1)
-                    for ent in entities:
-                        start, end = ent["start"], ent["end"]
-                        prev_start, prev_end = prev_offset
-                        if prev_start <= start < prev_end:
-                            continue  
-                        offsets.append((start, end))
-                        prev_offset = (start, end)
+                annotations = filter_to_offsets(annotations)
 
-                    data_with_offsets[doc_id] = offsets
-                method_annotations = data_with_offsets
-            
-            print("Saving annotations...")
-            generator.save_annotations(method_annotations, annotation_file, indent=2 if args.include_other else None)
-            total_generated += 1
-            
-            print(f"✓ Generated {method} annotations:")
+            generator.save_annotations(
+                annotations,
+                str(output_file),
+                indent=2 if args.include_other else None,
+            )
+            results_generated += 1
+
+            print(f"✓ Generated {method} annotations.")
             print(f"  Documents with annotations: {stats['documents_with_annotations']}")
             print(f"  Total spans: {stats['total_spans']}")
             print(f"  Coverage: {stats['coverage']:.2%}")
-            
             if args.output_stats:
-                print(f"  Average spans per document: {stats['average_spans_per_document']:.2f}")
-                
-        except Exception as e:
-            print(f"✗ Failed to generate {method} annotations: {e}")
-    
-    method_progress.close()
-    
-    print(f"\nGenerated {total_generated} new annotation files!")
+                print(f"  Avg spans per doc: {stats['average_spans_per_document']:.2f}")
+        except Exception as exc:
+            print(f"✗ Failed to generate {method} annotations: {exc}")
+
+    print(f"\nGenerated {results_generated} annotation files.")
 
 
 if __name__ == "__main__":

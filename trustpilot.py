@@ -26,6 +26,8 @@ from dpmlm.config_utils import (
     prepare_dpmlm_model_config,
 )
 from petre import PETRE
+from dpmlm.multi import MultiEpsilonDPMLM
+from dpmlm.config import DPMLMConfig
 from pii import DataLabels, TorchTokenClassifier, PIIDeidentifier
 
 logging.basicConfig(
@@ -118,11 +120,11 @@ def main() -> int:
         help="Type of DP mechanism to use",
     )
     parser.add_argument(
-        "--epsilon",
+        "--epsilons",
         "-e",
-        type=float,
-        default=1.0,
-        help="Privacy parameter epsilon",
+        type=str,
+        default="10,25,50,100,250",
+        help="Privacy parameter epsilon, single value or comma-separated list",
     )
     parser.add_argument(
         "--device",
@@ -144,12 +146,6 @@ def main() -> int:
         help="Path to JSON configuration file containing model-specific parameters",
     )
     parser.add_argument(
-        "--preset",
-        type=str,
-        default=None,
-        help="Use preset configuration",
-    )
-    parser.add_argument(
         "--data-out",
         dest="data_out",
         type=str,
@@ -160,11 +156,6 @@ def main() -> int:
         "--list-mechanisms",
         action="store_true",
         help="List available mechanisms and exit",
-    )
-    parser.add_argument(
-        "--list-presets",
-        action="store_true",
-        help="List available presets and exit",
     )
     parser.add_argument(
         "--verbose",
@@ -182,12 +173,6 @@ def main() -> int:
         print("Available mechanisms:")
         for mechanism in sorted(set(dpmlm.list_mechanisms())):
             print(f"  - {mechanism}")
-        return 0
-
-    if args.list_presets:
-        print("Available presets:")
-        for preset in sorted(set(dpmlm.list_presets())):
-            print(f"  - {preset}")
         return 0
 
     try:
@@ -230,18 +215,37 @@ def main() -> int:
         if args.verbose:
             config_for_factory["verbose"] = True
 
-    if args.preset:
-        logger.info("Using preset configuration: %s", args.preset)
-        mechanism = dpmlm.create_from_preset(
-            args.preset,
-            override_config=config_for_factory,
+    logger.info("Creating %s mechanism", mechanism_type)
+
+    generic_payload = config_for_factory.get("generic", {})
+    runtime_payload = config_for_factory.get("runtime", {})
+
+    if any(
+        key in config_for_factory
+        for key in ("dpmlm", "dpmlm_config", "risk", "risk_settings", "risk_config")
+    ):
+        model_payload = config_for_factory.get("dpmlm") or config_for_factory.get("dpmlm_config") or {}
+        risk_payload = (
+            config_for_factory.get("risk")
+            or config_for_factory.get("risk_settings")
+            or config_for_factory.get("risk_config")
+            or {}
         )
+        model_payload = {**model_payload, **risk_payload}
     else:
-        logger.info("Creating %s mechanism", mechanism_type)
-        mechanism = dpmlm.create_mechanism(
-            mechanism_type,
-            config=config_for_factory,
-        )
+        model_payload = config_for_factory.get("model") or {
+            key: value
+            for key, value in config_for_factory.items()
+            if key not in {"generic", "runtime"}
+        }
+
+    config = DPMLMConfig(
+        generic=generic_payload,
+        model=model_payload,
+        runtime=runtime_payload,
+    )
+    
+    mechanism = MultiEpsilonDPMLM(config)
 
     dataset = load_dataset('json', data_files={'train': DATASET_PATH})['train']
     texts = [recode_text(row['review']) for row in dataset]
@@ -267,32 +271,40 @@ def main() -> int:
     np.savetxt(initial_ranks_file_path, initial_ranks, delimiter=",", fmt="%d")
     logger.info("Initial ranks saved to %s", initial_ranks_file_path)
 
-    anonymized_texts = []
+    epsilons = list(map(int, args.epsilons.split(",")))
+    privacy_results_by_epsilon = {}
     for idx, text in enumerate(tqdm(texts, desc="Applying differential privacy")):
-        logger.info("Applying differential privacy with epsilon=%.3f", args.epsilon)
+        logger.info("Applying differential privacy with epsilons=%s", args.epsilons)
         try:
-            anonymized_text = mechanism.privatize(
+            for epsilon, privacy_result in mechanism.privatize_many(
                 text,
-                epsilon=args.epsilon,
-            ).private_text
+                epsilons=epsilons,
+            ).items():
+                privacy_results_by_epsilon.setdefault(epsilon, []).append(privacy_result)
         except Exception as exc:  # pragma: no cover - defensive
             logger.warning(
                 "Privatization failed for document %d; storing empty text. Error: %s",
                 idx,
                 exc,
             )
-            anonymized_text = ""
-        anonymized_texts.append(anonymized_text)
+            privacy_results_by_epsilon.setdefault(epsilon, []).append(None)
 
-    with open(f"{OUTPUT_DIR}/{args.type}_{args.epsilon}.json", "w", encoding="utf-8") as f:
-        for orig, anon in zip(texts, anonymized_texts):
-            json.dump({"original": orig, "anonymized": anon}, f)
-            f.write("\n")
+    risk_type = mechanism.config.model.explainability_mode or "unknown"
+    for epsilon, privacy_results in privacy_results_by_epsilon.items():
+        original_texts, anonymized_texts = [], []
+        with open(f"{OUTPUT_DIR}/results_{args.type}_{risk_type}_{epsilon}.jsonl", "w", encoding="utf-8") as f:
+            for privacy_result in privacy_results:
+                original_text = privacy_result.original_text if privacy_result else ""
+                original_texts.append(original_text)
+                anonymized_text = privacy_result.private_text if privacy_result else ""
+                anonymized_texts.append(anonymized_text)
+                json.dump({"original": original_text, "anonymized": anonymized_text}, f)
+                f.write("\n")
 
-    ranks = evaluate(tri_pipeline, anonymized_texts, target_labels)
-    ranks_file_path = f"{OUTPUT_DIR}/ranks_{args.type}_{args.epsilon}.csv"
-    np.savetxt(ranks_file_path, ranks, delimiter=",", fmt="%d")
-    logger.info("Ranks saved to %s", ranks_file_path)
+        ranks = evaluate(tri_pipeline, anonymized_texts, target_labels)
+        ranks_file_path = f"{OUTPUT_DIR}/ranks_{args.type}_{risk_type}_{epsilon}.csv"
+        np.savetxt(ranks_file_path, ranks, delimiter=",", fmt="%d")
+        logger.info("Ranks saved to %s", ranks_file_path)
 
 def evaluate(
     tri_pipeline,

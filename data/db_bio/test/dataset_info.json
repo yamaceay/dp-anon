@@ -1,0 +1,86 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "db-bio",
+  "dataset_size": 3756792,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/gabrielloiseau/DB-Bio@1f0465475dfe87197f37fa55928dae5ca8e0cca0/train.jsonl": {
+      "num_bytes": 3177520,
+      "checksum": null
+    },
+    "hf://datasets/gabrielloiseau/DB-Bio@1f0465475dfe87197f37fa55928dae5ca8e0cca0/val.jsonl": {
+      "num_bytes": 399392,
+      "checksum": null
+    },
+    "hf://datasets/gabrielloiseau/DB-Bio@1f0465475dfe87197f37fa55928dae5ca8e0cca0/test.jsonl": {
+      "num_bytes": 380031,
+      "checksum": null
+    }
+  },
+  "download_size": 3956943,
+  "features": {
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "l1": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "l2": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "l3": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "wiki_name": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "word_count": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "label": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "people": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 7713735,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 3017690,
+      "num_examples": 1938,
+      "dataset_name": "db-bio"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 379043,
+      "num_examples": 243,
+      "dataset_name": "db-bio"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 360059,
+      "num_examples": 239,
+      "dataset_name": "db-bio"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

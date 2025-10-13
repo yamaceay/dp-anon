@@ -7,6 +7,10 @@ import re
 import ntpath
 import time
 import logging
+import argparse
+import tempfile
+import shutil
+from pathlib import Path
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO) # Configure logging
 
 from tqdm.autonotebook import tqdm
@@ -21,23 +25,18 @@ from transformers import pipeline, Pipeline
 import datasets
 import shap
 import concurrent
+from collections import OrderedDict
+from typing import Dict, Iterable, List, Optional, Sequence, Set
 
+from loaders import DatasetAdapter, get_adapter
+from loaders.base import DatasetRecord
+from dpmlm.interfaces import PrivacyResult
+from presets import PETRE_PRESETS, get_petre_preset
+from dpmlm.config_utils import resolve_device
 
 #endregion
 
 #region ###################################### Configuration file argument ######################################
-
-#region ################### Arguments parsing ###################
-def argument_parsing():
-    if (args_count := len(sys.argv)) > 2:
-        raise Exception(f"One argument expected, got {args_count - 1}")
-    elif args_count < 2:
-        raise Exception("You must specify the JSON configuration filepath as first argument")
-
-    target_dir = sys.argv[1]
-    return target_dir
-
-#endregion
 
 #region ################### JSON file loading ###################
 def get_config_from_file(target_dir):
@@ -172,9 +171,9 @@ class PETRE():
     #region ################### Initialization ###################
 
     def initialization(self, verbose=True):
-        if verbose: logging.info("######### START: INITIALIZATION #########")
+        if verbose: logging.debug("######### START: INITIALIZATION #########")
 
-        if verbose: logging.info("#### START: LOADING DATA ####")
+        if verbose: logging.debug("#### START: LOADING DATA ####")
 
         if os.path.exists(self.data_file_path):
             if self.data_file_path.endswith(".json"): # JSON
@@ -190,18 +189,18 @@ class PETRE():
         else:
             raise Exception(f"Data file at {self.data_file_path} not found")
 
-        if verbose: logging.info("#### END: LOADING DATA ####")
+        if verbose: logging.debug("#### END: LOADING DATA ####")
 
-        if verbose: logging.info("#### START: LOADING TRI PIPELINE AND EXPLAINER ####")
+        if verbose: logging.debug("#### START: LOADING TRI PIPELINE AND EXPLAINER ####")
         
         # Load re-identification pipeline
-        
-        self.tri_pipeline = pipeline("text-classification", model=self.tri_pipeline_path,
-                                    tokenizer=self.tri_pipeline_path,
-                                    device=self.device,
-                                    top_k=self.num_labels,
-                                    max_length=512,
-                                    truncation=True)
+        if self.tri_pipeline is None:
+            self.tri_pipeline = pipeline("text-classification", model=self.tri_pipeline_path,
+                                        tokenizer=self.tri_pipeline_path,
+                                        device=self.device,
+                                        top_k=self.num_labels,
+                                        max_length=512,
+                                        truncation=True)
 
         # Define explainability_method
         if self.explainability_mode == "SHAP":
@@ -212,9 +211,9 @@ class PETRE():
         else:
             raise Exception(f"Unrecognized explainability mode \"{self.explainability_mode}\". Select \"SHAP\" or \"Greddy\"")
 
-        if verbose: logging.info("#### END: LOADING TRI PIPELINE AND EXPLAINER ####")
+        if verbose: logging.debug("#### END: LOADING TRI PIPELINE AND EXPLAINER ####")
 
-        if verbose: logging.info("#### START: CREATING DATASET WITH STARTING ANONYMIZATION ####")
+        if verbose: logging.debug("#### START: CREATING DATASET WITH STARTING ANONYMIZATION ####")
 
         self.dataset = PETREDataset(self.data_df, self.tri_pipeline.tokenizer, self.name_to_label, self.mask_text, use_chunking=self.use_chunking)
         
@@ -226,32 +225,32 @@ class PETRE():
         else:
             raise Exception(f"Starting anonymization file at {self.starting_anonymization_path} not found")
         
-        if verbose: logging.info("#### END: CREATING DATASET WITH STARTING ANONYMIZATION ####")
+        if verbose: logging.debug("#### END: CREATING DATASET WITH STARTING ANONYMIZATION ####")
 
-        if verbose: logging.info("#### START: COMPARING DATA WITH ANONYMIZATION ####")
+        if verbose: logging.debug("#### START: COMPARING DATA WITH ANONYMIZATION ####")
 
         individuals = set(self.names)
-        if verbose: logging.info(f"There are {len(individuals)} individuals to protect")
+        if verbose: logging.debug(f"There are {len(individuals)} individuals to protect")
         annotation_names = set(starting_annotations.keys())
-        if verbose: logging.info(f"There are {len(annotation_names)} annotations")
+        if verbose: logging.debug(f"There are {len(annotation_names)} annotations")
         self.annotated_individuals = individuals.intersection(annotation_names)
         self.non_annotated_individuals = individuals - self.annotated_individuals
         if len(self.non_annotated_individuals) == 0:
-           if verbose: logging.info(f"All individuals have annotations")
+           if verbose: logging.debug(f"All individuals have annotations")
         else:
            if verbose: logging.warning(f"There are {len(self.non_annotated_individuals)} individuals without annotations: {self.non_annotated_individuals}")
 
-        if verbose: logging.info("#### END: COMPARING DATA WITH ANONYMIZATION ####")
+        if verbose: logging.debug("#### END: COMPARING DATA WITH ANONYMIZATION ####")
 
-        if verbose: logging.info("#### START: CREATING OUTPUT FOLDER ####")
+        if verbose: logging.debug("#### START: CREATING OUTPUT FOLDER ####")
         
         if not os.path.isdir(self.output_folder_path):
             os.makedirs(self.output_folder_path, exist_ok=True)
 
-        if verbose: logging.info("#### END: CREATING OUTPUT FOLDER ####")
+        if verbose: logging.debug("#### END: CREATING OUTPUT FOLDER ####")
         
 
-        if verbose: logging.info("######### END: INITIALIZATION #########")
+        if verbose: logging.debug("######### END: INITIALIZATION #########")
 
     #endregion
 
@@ -259,27 +258,27 @@ class PETRE():
     #region ################### Incremental execution ###################
 
     def incremental_execution(self, verbose:bool=True):
-        if verbose: logging.info("######### START: EXECUTION #########")
+        if verbose: logging.debug("######### START: EXECUTION #########")
 
-        if verbose: logging.info("#### START: STARTING POINT ####")
+        if verbose: logging.debug("#### START: STARTING POINT ####")
         
         # Compute and save initial ranks
         accuracy, ranks, docs_probs = self.evaluate(max_rank=1)
         ranks_file_path = os.path.join(self.output_folder_path, f'ranks_k=0.csv')
         ranks.tofile(ranks_file_path, sep=",")
-        logging.info(f"Initial rank==1 rate = {accuracy*100:.2f}%") # TODO: Remove?
+        logging.debug(f"Initial rank==1 rate = {accuracy*100:.2f}%") # TODO: Remove?
 
-        if verbose: logging.info("#### END: STARTING POINT ####")
+        if verbose: logging.debug("#### END: STARTING POINT ####")
 
         # Incrementing k
         for current_k in self.ks:
-            if verbose: logging.info(F"#### START: PETRE WITH K={current_k} ####")
+            if verbose: logging.debug(F"#### START: PETRE WITH K={current_k} ####")
             
             self.petre(current_k, plot_explanations=False, verbose=True) # TODO: Check this verbose            
 
-            if verbose: logging.info(F"#### END: PETRE WITH K={current_k} ####")
+            if verbose: logging.debug(F"#### END: PETRE WITH K={current_k} ####")
 
-        if verbose: logging.info("######### END: EXECUTION #########")
+        if verbose: logging.debug("######### END: EXECUTION #########")
 
     #region ########## Re-identification risk evaluation ##########
 
@@ -478,7 +477,7 @@ class PETRE():
 
         # Load already existing annotations if they exist
         if os.path.exists(annotations_file_path):
-            if verbose: logging.info(f"Loading already existing annotations for k={k}")
+            if verbose: logging.debug(f"Loading already existing annotations for k={k}")
             with open(annotations_file_path, "r", encoding="utf-8") as f:
                 annotations = json.load(f)
                 self.dataset.add_annotations(annotations)
@@ -486,7 +485,7 @@ class PETRE():
         # Compute individuals that keep requiring protection # TODO: Check if use this
         accuracy, ranks, docs_probs = self.evaluate(max_rank=k)
         n_individuals_to_protect = np.count_nonzero(ranks<k)
-        if verbose: logging.info(f"Number of individuals requiring protection = {n_individuals_to_protect}")
+        if verbose: logging.debug(f"Number of individuals requiring protection = {n_individuals_to_protect}")
 
         with tqdm(range(n_individuals_to_protect), total=n_individuals_to_protect) as pbar:
             # For each document in the dataset
@@ -503,7 +502,7 @@ class PETRE():
                     while not doc_processed:
                         message = f"Individual [{name}] obtained a rank of {rank} with a probability of {prob*100:.2f}%"
                         pbar.set_description(message)
-                        if verbose: logging.info(message)
+                        if verbose: logging.debug(message)
 
                         # While top position is not great enough and not in an end state
                         while rank < k:
@@ -515,12 +514,12 @@ class PETRE():
                             
                             # If no term is masked, there are no more terms to mask in this document (avoid infinite loops)
                             if n_masked_terms == 0:                                
-                                if verbose: logging.info("All meaningful terms already have been masked")
+                                if verbose: logging.debug("All meaningful terms already have been masked")
                                 break # Exit lopp
                             # If at least one term has been masked
                             else:
                                 rank, prob = self.get_doc_rank(splits_probs, label) # Recompute the rank
-                                if verbose: logging.info(f"Term [{most_disclosive_term}] masked with {n_masked_terms} instance/s | Rank = {rank} | Prob = {prob*100:.2f}%")
+                                if verbose: logging.debug(f"Term [{most_disclosive_term}] masked with {n_masked_terms} instance/s | Rank = {rank} | Prob = {prob*100:.2f}%")
                         
                         # Document has been processed
                         doc_processed = True
@@ -536,7 +535,7 @@ class PETRE():
         ranks_file_path = os.path.join(self.output_folder_path, f'ranks_k={k}.csv')
         ranks.tofile(ranks_file_path, sep=",")
 
-        if verbose: logging.info(f"Total number of steps = {total_n_steps}")
+        if verbose: logging.debug(f"Total number of steps = {total_n_steps}")
 
         return annotations, total_n_steps
 
@@ -939,17 +938,346 @@ class PETREDataset(Dataset):
 
 #endregion
 
-#region ###################################### Main CLI ######################################
-if __name__ == "__main__":
-    verbose=True
+#region ###################################### Simple benchmarking helpers ######################################
 
-    # Load configuration
-    if verbose: logging.info("######### START: CONFIGURATION #########")
-    target_dir = argument_parsing()
-    config = get_config_from_file(target_dir)
+_PETRE_NLP = None
+
+
+def _get_spacy_nlp():
+    global _PETRE_NLP
+    if _PETRE_NLP is None:
+        _PETRE_NLP = en_core_web_lg.load()
+    return _PETRE_NLP
+
+
+def _infer_dataset_name(
+    provided: Optional[str],
+    records: Iterable[DatasetRecord],
+    risk_pipeline: Pipeline,
+) -> str:
+    if provided:
+        return provided.lower()
+
+    pipeline_name = ""
+    model = getattr(risk_pipeline, "model", None)
+    if model is not None:
+        pipeline_name = getattr(model, "name_or_path", "") or ""
+
+    lowered = pipeline_name.lower()
+    for preset_name in PETRE_PRESETS:
+        if preset_name in lowered:
+            return preset_name
+
+    # Fallback: try to infer from record metadata
+    first_record = next(iter(records), None)
+    if first_record and first_record.metadata:
+        metadata_values = [str(value).lower() for value in first_record.metadata.values() if isinstance(value, str)]
+        for preset_name in PETRE_PRESETS:
+            if any(preset_name in value for value in metadata_values):
+                return preset_name
+
+    raise ValueError("Unable to infer dataset preset for PETRE. Please specify dataset_name explicitly.")
+
+
+def _build_privacy_results_from_petre(
+    petre_instance: "PETRE",
+    target_uids: Set[str],
+    *,
+    current_k: int,
+) -> Dict[str, PrivacyResult]:
+    annotations = petre_instance.dataset.get_annotations(disable_tqdm=True)
+    mask_text = petre_instance.mask_text
+    tokenizer = petre_instance.dataset.spacy_nlp
+
+    results: Dict[str, PrivacyResult] = {}
+
+    for document in petre_instance.dataset:
+        label = document["label"]
+        uid = str(petre_instance.label_to_name[label])
+        if target_uids and uid not in target_uids:
+            continue
+
+        original_text = document["text"]
+        private_text = original_text
+        spans = annotations.get(uid, [])
+        for start, end in sorted(spans, key=lambda span: span[0], reverse=True):
+            private_text = private_text[:start] + mask_text + private_text[end:]
+
+        if tokenizer is not None:
+            total_tokens = len(tokenizer(original_text))
+        else:
+            total_tokens = len(original_text.split())
+
+        result = PrivacyResult(
+            original_text=original_text,
+            private_text=private_text,
+            perturbed_tokens=len(spans),
+            total_tokens=total_tokens,
+        )
+        result.metadata = {
+            "mechanism": "petre",
+            "uid": uid,
+            "k": int(current_k),
+            "ks": list(getattr(petre_instance, "ks", [])),
+        }
+        results[uid] = result
+
+    return results
+
+
+def _pipeline_device_id(device: str) -> int:
+    if device == "cuda":
+        return 0
+    if device == "mps":
+        return 0
+    return -1
+
+
+def privatize_all(
+    records: Iterable[DatasetRecord],
+    risk_pipeline: Pipeline,
+    *,
+    dataset_name: Optional[str] = None,
+    mask_text: Optional[str] = None,
+    ks: Optional[Sequence[int]] = None,
+    entity_labels: Optional[Sequence[str]] = None,  # Reserved for future compatibility
+) -> "OrderedDict[int, List[PrivacyResult]]":
+    """Run PETRE progressively for each k and return ordered privacy results."""
+
+    records = list(records)
+    if not records:
+        return OrderedDict()
+
+    inferred_dataset = _infer_dataset_name(dataset_name, records, risk_pipeline)
+    config = get_petre_preset(inferred_dataset).copy()
+
+    if mask_text is not None:
+        config["mask_text"] = mask_text
+
+    ks_sequence = list(map(int, ks)) if ks else list(map(int, config.get("ks", [])))
+    if not ks_sequence:
+        raise ValueError("PETRE requires at least one k value to run.")
+
+    temp_output = tempfile.mkdtemp(prefix="petre_priv_")
+    config["output_base_folder_path"] = temp_output
+
+    petre_instance = PETRE(**config)
+    if mask_text is not None:
+        petre_instance.mask_text = mask_text
+
+    petre_instance.tri_pipeline = risk_pipeline
+
+    results_by_k: "OrderedDict[int, List[PrivacyResult]]" = OrderedDict()
+
+    try:
+        petre_instance.initialization(verbose=False)
+        target_uids = {str(record.uid) for record in records}
+
+        for current_k in ks_sequence:
+            petre_instance.petre(int(current_k), plot_explanations=False, verbose=False)
+            results_map = _build_privacy_results_from_petre(
+                petre_instance,
+                target_uids,
+                current_k=int(current_k),
+            )
+
+            ordered_results: List[PrivacyResult] = []
+            for record in records:
+                uid = str(record.uid)
+                result = results_map.get(uid)
+                if result is None:
+                    raise ValueError(
+                        f"PETRE did not produce an output for uid '{uid}' at k={current_k}. "
+                        "Ensure the dataset preset matches the loader records."
+                    )
+                ordered_results.append(result)
+
+            results_by_k[int(current_k)] = ordered_results
+    finally:
+        shutil.rmtree(temp_output, ignore_errors=True)
+
+    return results_by_k
+
+
+def _build_adapter(dataset: str, args: argparse.Namespace) -> DatasetAdapter:
+    kwargs: Dict[str, object] = {"max_records": args.max_records}
+    key = dataset.lower()
+    if key == "trustpilot":
+        if args.dataset_path:
+            kwargs["data_path"] = args.dataset_path
+    elif key == "tab":
+        if args.dataset_path:
+            kwargs["data_path"] = args.dataset_path
+    elif key in {"db_bio", "db-bio"}:
+        if args.dataset_path:
+            kwargs["root"] = args.dataset_path
+        kwargs["split"] = args.split
+    else:
+        raise ValueError(f"Unsupported dataset '{dataset}'.")
+    return get_adapter(dataset, **kwargs)
+
+
+def run_mask_command(args: argparse.Namespace) -> int:
+    device = resolve_device(args.device)
+    risk_pipeline = pipeline(
+        "text-classification",
+        model=args.risk_model,
+        tokenizer=args.risk_model,
+        device=_pipeline_device_id(device),
+        top_k=None,
+        truncation=True,
+        max_length=512,
+    )
+
+    adapter = _build_adapter(args.dataset, args)
+    records = list(adapter.iter_records())
+
+    labels = [label.strip() for label in args.entity_labels.split(",")] if args.entity_labels else None
+    results_by_k = privatize_all(
+        records,
+        risk_pipeline,
+        dataset_name=args.dataset,
+        mask_text=args.mask_text,
+        ks=None,
+        entity_labels=labels,
+    )
+
+    if not results_by_k:
+        logging.warning("PETRE produced no outputs.")
+        return 0
+
+    last_k, final_results = next(reversed(results_by_k.items()))
+
+    output_dir = Path(args.output_dir) / args.dataset.lower()
+    if args.split:
+        output_dir = output_dir / args.split
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "petre_results.jsonl"
+
+    with output_path.open("w", encoding="utf-8") as handle:
+        for record, result in zip(records, final_results):
+            key = str(record.uid)
+            handle.write(
+                json.dumps(
+                    {
+                        "uid": key,
+                        "original": record.text,
+                        "petre": result.private_text if result else "",
+                        "petre_metadata": result.metadata if result else {},
+                        "metadata": record.metadata,
+                    },
+                    ensure_ascii=False,
+                )
+            )
+            handle.write("\n")
+
+    logging.debug("PETRE anonymised %d records at k=%s -> %s", len(records), last_k, output_path)
+    return 0
+
+
+def build_cli_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="PETRE anonymisation utilities")
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose/debug logging.",
+    )
+    parser.add_argument(
+        "legacy_target",
+        nargs="?",
+        help=argparse.SUPPRESS,
+    )
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    run_parser = subparsers.add_parser("run", help="Run PETRE with a preset or config file.")
+    run_parser.add_argument(
+        "target",
+        nargs="?",
+        help="Preset name (trustpilot, tab, ...) or path to a PETRE JSON config.",
+    )
+
+    mask_parser = subparsers.add_parser("mask", help="Mask a dataset using PETRE via loader adapters.")
+    mask_parser.add_argument("--dataset", required=True, help="Dataset name (trustpilot, tab, db_bio).")
+    mask_parser.add_argument("--risk-model", required=True, help="Path to the TRI/risk model directory.")
+    mask_parser.add_argument("--dataset-path", default=None, help="Override dataset path/root.")
+    mask_parser.add_argument("--split", default="train", help="Dataset split if applicable.")
+    mask_parser.add_argument("--max-records", type=int, default=None, help="Limit records processed.")
+    mask_parser.add_argument("--mask-text", default=None, help="Override mask token.")
+    mask_parser.add_argument(
+        "--entity-labels",
+        default=None,
+        help="Comma-separated spaCy entity labels to anonymise (default: PERSON,ORG,GPE,LOC,NORP,FAC).",
+    )
+    mask_parser.add_argument(
+        "--output-dir",
+        default="outputs/petre",
+        help="Directory for JSONL results.",
+    )
+    mask_parser.add_argument(
+        "--device",
+        default="auto",
+        help="Device preference for risk pipeline (auto, cpu, cuda, mps).",
+    )
+    mask_parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional random seed (for parity).",
+    )
+
+    return parser
+
+
+def parse_cli_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    parser = build_cli_parser()
+    args = parser.parse_args(argv)
+
+    if args.command == "run":
+        if not args.target:
+            parser.error("Please provide a preset name or path to a PETRE JSON config.")
+    elif args.command == "mask":
+        pass
+    else:
+        if getattr(args, "legacy_target", None):
+            args.command = "run"
+            args.target = str(args.legacy_target)
+        else:
+            parser.error("No command provided. Use 'run' or 'mask'.")
+
+    return args
+
+#endregion
+
+#region ###################################### Main CLI ######################################
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    args = parse_cli_args(argv)
+
+    logging.getLogger().setLevel(logging.DEBUG if args.verbose else logging.INFO)
+
+    if args.command == "mask":
+        return run_mask_command(args)
+
+    target = str(args.target) if args.target is not None else None
+    logging.info("######### START: CONFIGURATION #########")
+
+    if target and target.endswith(".json"):
+        config = get_config_from_file(target)
+    else:
+        try:
+            config = get_petre_preset(target)
+        except ValueError as exc:
+            logging.error(str(exc))
+            raise SystemExit(1) from exc
+
     petre = PETRE(**config)
-    if verbose: logging.info("######### END: CONFIGURATION #########")
-    
-    # Run all sections
-    petre.run(verbose=verbose)
+    logging.info("######### END: CONFIGURATION #########")
+
+    petre.run(verbose=args.verbose)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
 #endregion
