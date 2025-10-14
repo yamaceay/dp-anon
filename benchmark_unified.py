@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
+import torch
 from tqdm import tqdm
 
 from annotation_utils import NormalisedAnnotation, apply_annotations

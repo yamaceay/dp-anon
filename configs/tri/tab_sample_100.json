@@ -3,7 +3,7 @@
     "data_file_path": "data/TAB/samples/train_100.json",
     "individual_name_column": "doc_id",
     "background_knowledge_column": "text",
-    "annotation_folder_path": "data/TAB/samples/annotations/tab/train",
+    "annotation_folder_path": "outputs/tab/train/annotations",
     "annotation_mask_token": "[MASK]",
     "load_saved_pretreatment": false,
     "add_non_saved_anonymizations": true,
