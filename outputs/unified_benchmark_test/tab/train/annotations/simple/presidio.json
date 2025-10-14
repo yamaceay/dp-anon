@@ -1,0 +1,813 @@
+{
+  "001-90194": [
+    {
+      "start": 72,
+      "end": 94,
+      "text": "the Kingdom of Denmark",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 236,
+      "end": 242,
+      "text": "Danish",
+      "label": "NRP",
+      "confidence": 0.85
+    },
+    {
+      "start": 256,
+      "end": 271,
+      "text": "Henrik Hasslund",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 294,
+      "end": 308,
+      "text": "31 August 2006",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 347,
+      "end": 357,
+      "text": "Tyge Trier",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 382,
+      "end": 392,
+      "text": "Copenhagen",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 471,
+      "end": 493,
+      "text": "Nina Holst-Christensen",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 526,
+      "end": 542,
+      "text": "5 September 2007",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 829,
+      "end": 833,
+      "text": "1973",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 847,
+      "end": 868,
+      "text": "Les Salles Sur Verdon",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 870,
+      "end": 876,
+      "text": "France",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 882,
+      "end": 908,
+      "text": "the beginning of the 1990s",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1003,
+      "end": 1010,
+      "text": "Denmark",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 1714,
+      "end": 1728,
+      "text": "the late 1980s",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1735,
+      "end": 1739,
+      "text": "1994",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1846,
+      "end": 1864,
+      "text": "the summer of 1993",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1870,
+      "end": 1874,
+      "text": "1994",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2053,
+      "end": 2064,
+      "text": "9 June 1994",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2154,
+      "end": 2166,
+      "text": "14 June 1994",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2314,
+      "end": 2345,
+      "text": "November 1994 to September 1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2471,
+      "end": 2488,
+      "text": "19 September 1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2574,
+      "end": 2586,
+      "text": "the same day",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2694,
+      "end": 2710,
+      "text": "22 December 1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2960,
+      "end": 2981,
+      "text": "the beginning of 1996",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2989,
+      "end": 3001,
+      "text": "January 1996",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3005,
+      "end": 3014,
+      "text": "June 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3128,
+      "end": 3135,
+      "text": "Denmark",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 3137,
+      "end": 3148,
+      "text": "Switzerland",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 3153,
+      "end": 3159,
+      "text": "Sweden",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 3184,
+      "end": 3191,
+      "text": "Denmark",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 3364,
+      "end": 3377,
+      "text": "19 March 1997",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3532,
+      "end": 3544,
+      "text": "25 June 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3808,
+      "end": 3826,
+      "text": "between March 1992",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3831,
+      "end": 3839,
+      "text": "May 1993",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4031,
+      "end": 4053,
+      "text": "Between 14 August 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4058,
+      "end": 4071,
+      "text": "10 March 1999",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4222,
+      "end": 4235,
+      "text": "15 March 1999",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4238,
+      "end": 4259,
+      "text": "Between 15 March 1999",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4264,
+      "end": 4279,
+      "text": "31 January 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4618,
+      "end": 4626,
+      "text": "ten days",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4630,
+      "end": 4643,
+      "text": "November 2000",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4648,
+      "end": 4660,
+      "text": "January 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4680,
+      "end": 4692,
+      "text": "6 April 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 4894,
+      "end": 4904,
+      "text": "two years’",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 6696,
+      "end": 6707,
+      "text": "15 May 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 6814,
+      "end": 6828,
+      "text": "Østre Landsret",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 6924,
+      "end": 6941,
+      "text": "13 September 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7020,
+      "end": 7037,
+      "text": "24 September 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7166,
+      "end": 7184,
+      "text": "the autumn of 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7225,
+      "end": 7242,
+      "text": "24 September 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7279,
+      "end": 7283,
+      "text": "2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7288,
+      "end": 7292,
+      "text": "2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7349,
+      "end": 7372,
+      "text": "February and March 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7598,
+      "end": 7606,
+      "text": "ten days",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7610,
+      "end": 7620,
+      "text": "April, May",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7626,
+      "end": 7635,
+      "text": "June 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7641,
+      "end": 7658,
+      "text": "28 September 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 7910,
+      "end": 7927,
+      "text": "19 September 1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8200,
+      "end": 8217,
+      "text": "13 September 2001",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8279,
+      "end": 8293,
+      "text": "12 August 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8324,
+      "end": 8339,
+      "text": "the autumn 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8344,
+      "end": 8365,
+      "text": "the beginning of 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8584,
+      "end": 8601,
+      "text": "24 September 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8682,
+      "end": 8702,
+      "text": "7 to 12 October 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 8988,
+      "end": 9004,
+      "text": "17 December 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9009,
+      "end": 9021,
+      "text": "January 2005",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9088,
+      "end": 9101,
+      "text": "29 March 2005",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9188,
+      "end": 9201,
+      "text": "5 August 2005",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9313,
+      "end": 9326,
+      "text": "9 August 2005",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9537,
+      "end": 9547,
+      "text": "2 May 2006",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9760,
+      "end": 9778,
+      "text": "2 and 13 June 2006",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 9832,
+      "end": 9844,
+      "text": "21 June 2006",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    }
+  ],
+  "001-84741": [
+    {
+      "start": 72,
+      "end": 94,
+      "text": "the Republic of Poland",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 237,
+      "end": 248,
+      "text": "D. Stępniak",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 252,
+      "end": 264,
+      "text": "25 July 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 344,
+      "end": 358,
+      "text": "J. Wołąsiewicz",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 399,
+      "end": 413,
+      "text": "5 January 2007",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 736,
+      "end": 740,
+      "text": "1964",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 754,
+      "end": 759,
+      "text": "Bytom",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 795,
+      "end": 810,
+      "text": "21 October 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 856,
+      "end": 871,
+      "text": "24 October 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 894,
+      "end": 910,
+      "text": "Wodzisław Śląski",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 1247,
+      "end": 1254,
+      "text": "10 July",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1259,
+      "end": 1273,
+      "text": "7 October 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1278,
+      "end": 1290,
+      "text": "7 March 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1313,
+      "end": 1328,
+      "text": "15 October 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1330,
+      "end": 1344,
+      "text": "19 January and",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1345,
+      "end": 1357,
+      "text": "19 July 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2201,
+      "end": 2225,
+      "text": "Between 15 December 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2291,
+      "end": 2307,
+      "text": "21 November 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2375,
+      "end": 2392,
+      "text": "30 September 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2552,
+      "end": 2568,
+      "text": "11 December 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2779,
+      "end": 2788,
+      "text": "7 January",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2790,
+      "end": 2801,
+      "text": "18 February",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2806,
+      "end": 2821,
+      "text": "25 October 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3009,
+      "end": 3024,
+      "text": "15 January 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3029,
+      "end": 3042,
+      "text": "30 March 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3385,
+      "end": 3397,
+      "text": "9 April 2004",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    }
+  ],
+  "001-91042": [
+    {
+      "start": 71,
+      "end": 93,
+      "text": "the Republic of Turkey",
+      "label": "LOCATION",
+      "confidence": 0.85
+    },
+    {
+      "start": 235,
+      "end": 242,
+      "text": "Turkish",
+      "label": "NRP",
+      "confidence": 0.85
+    },
+    {
+      "start": 256,
+      "end": 270,
+      "text": "Nusret Amutgan",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 293,
+      "end": 309,
+      "text": "29 December 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 345,
+      "end": 357,
+      "text": "Ms B Özpolat",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 382,
+      "end": 391,
+      "text": "Gaziantep",
+      "label": "PERSON",
+      "confidence": 0.85
+    },
+    {
+      "start": 472,
+      "end": 486,
+      "text": "4 January 2008",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 870,
+      "end": 874,
+      "text": "1970",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 946,
+      "end": 959,
+      "text": "27 April 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1044,
+      "end": 1051,
+      "text": "Turkish",
+      "label": "NRP",
+      "confidence": 0.85
+    },
+    {
+      "start": 1419,
+      "end": 1435,
+      "text": "13 February 1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1514,
+      "end": 1524,
+      "text": "6 May 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 1979,
+      "end": 1991,
+      "text": "15 June 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2357,
+      "end": 2371,
+      "text": "20 August 1998",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2541,
+      "end": 2545,
+      "text": "1995",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 2797,
+      "end": 2813,
+      "text": "28 November 2002",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    },
+    {
+      "start": 3276,
+      "end": 3293,
+      "text": "16 September 2003",
+      "label": "DATE_TIME",
+      "confidence": 0.85
+    }
+  ]
+}

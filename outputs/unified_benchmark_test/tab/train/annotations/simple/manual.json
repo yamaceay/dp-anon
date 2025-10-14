@@ -1,0 +1,1412 @@
+{
+  "001-90194": [
+    {
+      "start": 54,
+      "end": 62,
+      "text": "36244/06",
+      "label": "CODE"
+    },
+    {
+      "start": 76,
+      "end": 94,
+      "text": "Kingdom of Denmark",
+      "label": "ORG"
+    },
+    {
+      "start": 236,
+      "end": 242,
+      "text": "Danish",
+      "label": "DEM"
+    },
+    {
+      "start": 253,
+      "end": 271,
+      "text": "Mr Henrik Hasslund",
+      "label": "PERSON"
+    },
+    {
+      "start": 294,
+      "end": 308,
+      "text": "31 August 2006",
+      "label": "DATETIME"
+    },
+    {
+      "start": 344,
+      "end": 357,
+      "text": "Mr Tyge Trier",
+      "label": "PERSON"
+    },
+    {
+      "start": 382,
+      "end": 392,
+      "text": "Copenhagen",
+      "label": "LOC"
+    },
+    {
+      "start": 398,
+      "end": 415,
+      "text": "Danish Government",
+      "label": "ORG"
+    },
+    {
+      "start": 468,
+      "end": 493,
+      "text": "Ms Nina Holst-Christensen",
+      "label": "PERSON"
+    },
+    {
+      "start": 501,
+      "end": 520,
+      "text": "Ministry of Justice",
+      "label": "ORG"
+    },
+    {
+      "start": 526,
+      "end": 542,
+      "text": "5 September 2007",
+      "label": "DATETIME"
+    },
+    {
+      "start": 571,
+      "end": 584,
+      "text": "Fifth Section",
+      "label": "ORG"
+    },
+    {
+      "start": 829,
+      "end": 833,
+      "text": "1973",
+      "label": "DATETIME"
+    },
+    {
+      "start": 847,
+      "end": 876,
+      "text": "Les Salles Sur Verdon, France",
+      "label": "LOC"
+    },
+    {
+      "start": 870,
+      "end": 876,
+      "text": "France",
+      "label": "LOC"
+    },
+    {
+      "start": 886,
+      "end": 908,
+      "text": "beginning of the 1990s",
+      "label": "DATETIME"
+    },
+    {
+      "start": 903,
+      "end": 908,
+      "text": "1990s",
+      "label": "DATETIME"
+    },
+    {
+      "start": 931,
+      "end": 950,
+      "text": "tax asset stripping",
+      "label": "MISC"
+    },
+    {
+      "start": 1003,
+      "end": 1010,
+      "text": "Denmark",
+      "label": "LOC"
+    },
+    {
+      "start": 1083,
+      "end": 1106,
+      "text": "aggravated debtor fraud",
+      "label": "MISC"
+    },
+    {
+      "start": 1582,
+      "end": 1606,
+      "text": "one thousand six hundred",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 1649,
+      "end": 1680,
+      "text": "two billion Danish kroner (DKK)",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 1718,
+      "end": 1739,
+      "text": "late 1980s until 1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1723,
+      "end": 1739,
+      "text": "1980s until 1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1735,
+      "end": 1739,
+      "text": "1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1850,
+      "end": 1864,
+      "text": "summer of 1993",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1860,
+      "end": 1864,
+      "text": "1993",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1870,
+      "end": 1874,
+      "text": "1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2032,
+      "end": 2037,
+      "text": "owner",
+      "label": "DEM"
+    },
+    {
+      "start": 2053,
+      "end": 2064,
+      "text": "9 June 1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2154,
+      "end": 2166,
+      "text": "14 June 1994",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2314,
+      "end": 2345,
+      "text": "November 1994 to September 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2331,
+      "end": 2345,
+      "text": "September 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2347,
+      "end": 2350,
+      "text": "six",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 2388,
+      "end": 2391,
+      "text": "two",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 2399,
+      "end": 2403,
+      "text": "four",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 2471,
+      "end": 2488,
+      "text": "19 September 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2546,
+      "end": 2569,
+      "text": "aggravated debtor fraud",
+      "label": "MISC"
+    },
+    {
+      "start": 2694,
+      "end": 2710,
+      "text": "22 December 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2771,
+      "end": 2840,
+      "text": "Copenhagen City Court (Københavns Byret - hereafter “the City Court”)",
+      "label": "ORG"
+    },
+    {
+      "start": 2794,
+      "end": 2810,
+      "text": "Københavns Byret",
+      "label": "ORG"
+    },
+    {
+      "start": 2828,
+      "end": 2838,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 2964,
+      "end": 2981,
+      "text": "beginning of 1996",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2977,
+      "end": 2981,
+      "text": "1996",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2989,
+      "end": 3014,
+      "text": "January 1996 to June 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3005,
+      "end": 3014,
+      "text": "June 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3075,
+      "end": 3102,
+      "text": "five co-accused in the case",
+      "label": "MISC"
+    },
+    {
+      "start": 3128,
+      "end": 3135,
+      "text": "Denmark",
+      "label": "LOC"
+    },
+    {
+      "start": 3137,
+      "end": 3148,
+      "text": "Switzerland",
+      "label": "LOC"
+    },
+    {
+      "start": 3153,
+      "end": 3159,
+      "text": "Sweden",
+      "label": "LOC"
+    },
+    {
+      "start": 3184,
+      "end": 3191,
+      "text": "Denmark",
+      "label": "LOC"
+    },
+    {
+      "start": 3251,
+      "end": 3259,
+      "text": "Interpol",
+      "label": "ORG"
+    },
+    {
+      "start": 3261,
+      "end": 3268,
+      "text": "fifteen",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 3364,
+      "end": 3377,
+      "text": "19 March 1997",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3532,
+      "end": 3544,
+      "text": "25 June 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3582,
+      "end": 3592,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 3631,
+      "end": 3665,
+      "text": "five co-accused: A, B, N, M and R)",
+      "label": "MISC"
+    },
+    {
+      "start": 3648,
+      "end": 3664,
+      "text": "A, B, N, M and R",
+      "label": "MISC"
+    },
+    {
+      "start": 3651,
+      "end": 3652,
+      "text": "B",
+      "label": "PERSON"
+    },
+    {
+      "start": 3654,
+      "end": 3655,
+      "text": "N",
+      "label": "PERSON"
+    },
+    {
+      "start": 3657,
+      "end": 3658,
+      "text": "M",
+      "label": "PERSON"
+    },
+    {
+      "start": 3663,
+      "end": 3664,
+      "text": "R",
+      "label": "PERSON"
+    },
+    {
+      "start": 3683,
+      "end": 3702,
+      "text": "tax asset stripping",
+      "label": "MISC"
+    },
+    {
+      "start": 3754,
+      "end": 3768,
+      "text": "fifteen counts",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 3787,
+      "end": 3807,
+      "text": "fifty-nine committed",
+      "label": "MISC"
+    },
+    {
+      "start": 3808,
+      "end": 3839,
+      "text": "between March 1992 and May 1993",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3816,
+      "end": 3839,
+      "text": "March 1992 and May 1993",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3831,
+      "end": 3839,
+      "text": "May 1993",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3884,
+      "end": 3935,
+      "text": "DKK 9,890,000 (approximately 1,300,000 euros (EUR))",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 3899,
+      "end": 3928,
+      "text": "approximately 1,300,000 euros",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 3913,
+      "end": 3934,
+      "text": "1,300,000 euros (EUR)",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4000,
+      "end": 4028,
+      "text": "approximately EUR 19,000,000",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4014,
+      "end": 4028,
+      "text": "EUR 19,000,000",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4031,
+      "end": 4053,
+      "text": "Between 14 August 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4039,
+      "end": 4071,
+      "text": "14 August 1998 and 10 March 1999",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4058,
+      "end": 4071,
+      "text": "10 March 1999",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4073,
+      "end": 4099,
+      "text": "fifteen pre-trial hearings",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4222,
+      "end": 4235,
+      "text": "15 March 1999",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4238,
+      "end": 4259,
+      "text": "Between 15 March 1999",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4246,
+      "end": 4279,
+      "text": "15 March 1999 and 31 January 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4264,
+      "end": 4279,
+      "text": "31 January 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4292,
+      "end": 4304,
+      "text": "119 hearings",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4335,
+      "end": 4350,
+      "text": "five co-accused",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4365,
+      "end": 4382,
+      "text": "seventy witnesses",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4569,
+      "end": 4580,
+      "text": "1,330 pages",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4618,
+      "end": 4626,
+      "text": "ten days",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4630,
+      "end": 4643,
+      "text": "November 2000",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4648,
+      "end": 4660,
+      "text": "January 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4680,
+      "end": 4692,
+      "text": "6 April 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4707,
+      "end": 4716,
+      "text": "220 pages",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 4722,
+      "end": 4732,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 4827,
+      "end": 4841,
+      "text": "The co-accused",
+      "label": "MISC"
+    },
+    {
+      "start": 4894,
+      "end": 4903,
+      "text": "two years",
+      "label": "DATETIME"
+    },
+    {
+      "start": 4945,
+      "end": 4958,
+      "text": "DKK 2,200,000",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 5209,
+      "end": 5219,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 5370,
+      "end": 5380,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 5501,
+      "end": 5505,
+      "text": "five",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 5618,
+      "end": 5628,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 5844,
+      "end": 5854,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 5932,
+      "end": 5947,
+      "text": "five co-accused",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 6115,
+      "end": 6125,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 6216,
+      "end": 6226,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 6361,
+      "end": 6364,
+      "text": "[M]",
+      "label": "MISC"
+    },
+    {
+      "start": 6362,
+      "end": 6363,
+      "text": "M",
+      "label": "PERSON"
+    },
+    {
+      "start": 6369,
+      "end": 6393,
+      "text": "[the co-accused B and R]",
+      "label": "MISC"
+    },
+    {
+      "start": 6370,
+      "end": 6384,
+      "text": "the co-accused",
+      "label": "MISC"
+    },
+    {
+      "start": 6385,
+      "end": 6386,
+      "text": "B",
+      "label": "PERSON"
+    },
+    {
+      "start": 6391,
+      "end": 6392,
+      "text": "R",
+      "label": "PERSON"
+    },
+    {
+      "start": 6437,
+      "end": 6461,
+      "text": "[the applicant, N and A]",
+      "label": "MISC"
+    },
+    {
+      "start": 6453,
+      "end": 6454,
+      "text": "N",
+      "label": "ORG"
+    },
+    {
+      "start": 6459,
+      "end": 6460,
+      "text": "A",
+      "label": "PERSON"
+    },
+    {
+      "start": 6549,
+      "end": 6559,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 6696,
+      "end": 6707,
+      "text": "15 May 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 6730,
+      "end": 6745,
+      "text": "five co-accused",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 6783,
+      "end": 6848,
+      "text": "High Court of Eastern Denmark (Østre Landsret - “the High Court”)",
+      "label": "ORG"
+    },
+    {
+      "start": 6813,
+      "end": 6828,
+      "text": "(Østre Landsret",
+      "label": "ORG"
+    },
+    {
+      "start": 6814,
+      "end": 6828,
+      "text": "Østre Landsret",
+      "label": "ORG"
+    },
+    {
+      "start": 6832,
+      "end": 6846,
+      "text": "the High Court",
+      "label": "ORG"
+    },
+    {
+      "start": 6868,
+      "end": 6874,
+      "text": "twelve",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 6924,
+      "end": 6941,
+      "text": "13 September 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7020,
+      "end": 7037,
+      "text": "24 September 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7073,
+      "end": 7086,
+      "text": "co-defendants",
+      "label": "MISC"
+    },
+    {
+      "start": 7170,
+      "end": 7184,
+      "text": "autumn of 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7180,
+      "end": 7184,
+      "text": "2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7225,
+      "end": 7242,
+      "text": "24 September 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7279,
+      "end": 7283,
+      "text": "2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7288,
+      "end": 7292,
+      "text": "2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7294,
+      "end": 7295,
+      "text": "A",
+      "label": "PERSON"
+    },
+    {
+      "start": 7305,
+      "end": 7313,
+      "text": "about 90",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 7311,
+      "end": 7322,
+      "text": "90 hearings",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 7349,
+      "end": 7372,
+      "text": "February and March 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7362,
+      "end": 7372,
+      "text": "March 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7469,
+      "end": 7479,
+      "text": "High Court",
+      "label": "ORG"
+    },
+    {
+      "start": 7551,
+      "end": 7560,
+      "text": "861 pages",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 7598,
+      "end": 7606,
+      "text": "ten days",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7610,
+      "end": 7635,
+      "text": "April, May, and June 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7626,
+      "end": 7635,
+      "text": "June 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7641,
+      "end": 7658,
+      "text": "28 September 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7663,
+      "end": 7673,
+      "text": "High Court",
+      "label": "ORG"
+    },
+    {
+      "start": 7685,
+      "end": 7695,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 7910,
+      "end": 7927,
+      "text": "19 September 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 7958,
+      "end": 7968,
+      "text": "High Court",
+      "label": "ORG"
+    },
+    {
+      "start": 7982,
+      "end": 7992,
+      "text": "City Court",
+      "label": "ORG"
+    },
+    {
+      "start": 8200,
+      "end": 8217,
+      "text": "13 September 2001",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8279,
+      "end": 8293,
+      "text": "12 August 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8295,
+      "end": 8296,
+      "text": "A",
+      "label": "PERSON"
+    },
+    {
+      "start": 8328,
+      "end": 8339,
+      "text": "autumn 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8335,
+      "end": 8339,
+      "text": "2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8348,
+      "end": 8365,
+      "text": "beginning of 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8361,
+      "end": 8365,
+      "text": "2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8584,
+      "end": 8601,
+      "text": "24 September 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8682,
+      "end": 8702,
+      "text": "7 to 12 October 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 8726,
+      "end": 8739,
+      "text": "co‑defendants",
+      "label": "ORG"
+    },
+    {
+      "start": 8759,
+      "end": 8805,
+      "text": "Leave to Appeal Board (Procesbevillingsnævnet)",
+      "label": "ORG"
+    },
+    {
+      "start": 8768,
+      "end": 8805,
+      "text": "Appeal Board (Procesbevillingsnævnet)",
+      "label": "ORG"
+    },
+    {
+      "start": 8782,
+      "end": 8804,
+      "text": "Procesbevillingsnævnet",
+      "label": "ORG"
+    },
+    {
+      "start": 8840,
+      "end": 8866,
+      "text": "Supreme Court (Højesteret)",
+      "label": "ORG"
+    },
+    {
+      "start": 8855,
+      "end": 8865,
+      "text": "Højesteret",
+      "label": "ORG"
+    },
+    {
+      "start": 8868,
+      "end": 8891,
+      "text": "Three of the defendants",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 8988,
+      "end": 9004,
+      "text": "17 December 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9009,
+      "end": 9021,
+      "text": "January 2005",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9088,
+      "end": 9101,
+      "text": "29 March 2005",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9125,
+      "end": 9138,
+      "text": "co‑defendants",
+      "label": "ORG"
+    },
+    {
+      "start": 9188,
+      "end": 9201,
+      "text": "5 August 2005",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9206,
+      "end": 9227,
+      "text": "Leave to Appeal Board",
+      "label": "ORG"
+    },
+    {
+      "start": 9313,
+      "end": 9326,
+      "text": "9 August 2005",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9350,
+      "end": 9363,
+      "text": "co-defendants",
+      "label": "MISC"
+    },
+    {
+      "start": 9537,
+      "end": 9547,
+      "text": "2 May 2006",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9580,
+      "end": 9601,
+      "text": "Leave to Appeal Board",
+      "label": "ORG"
+    },
+    {
+      "start": 9760,
+      "end": 9778,
+      "text": "2 and 13 June 2006",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9832,
+      "end": 9844,
+      "text": "21 June 2006",
+      "label": "DATETIME"
+    },
+    {
+      "start": 9892,
+      "end": 9905,
+      "text": "Supreme Court",
+      "label": "ORG"
+    }
+  ],
+  "001-84741": [
+    {
+      "start": 54,
+      "end": 62,
+      "text": "29366/03",
+      "label": "CODE"
+    },
+    {
+      "start": 76,
+      "end": 94,
+      "text": "Republic of Poland",
+      "label": "ORG"
+    },
+    {
+      "start": 234,
+      "end": 248,
+      "text": "Mr D. Stępniak",
+      "label": "PERSON"
+    },
+    {
+      "start": 252,
+      "end": 264,
+      "text": "25 July 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 271,
+      "end": 288,
+      "text": "Polish Government",
+      "label": "ORG"
+    },
+    {
+      "start": 341,
+      "end": 358,
+      "text": "Mr J. Wołąsiewicz",
+      "label": "PERSON"
+    },
+    {
+      "start": 399,
+      "end": 413,
+      "text": "5 January 2007",
+      "label": "DATETIME"
+    },
+    {
+      "start": 736,
+      "end": 740,
+      "text": "1964",
+      "label": "DATETIME"
+    },
+    {
+      "start": 754,
+      "end": 759,
+      "text": "Bytom",
+      "label": "LOC"
+    },
+    {
+      "start": 795,
+      "end": 810,
+      "text": "21 October 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 856,
+      "end": 871,
+      "text": "24 October 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 876,
+      "end": 910,
+      "text": "District Court in Wodzisław Śląski",
+      "label": "ORG"
+    },
+    {
+      "start": 1247,
+      "end": 1254,
+      "text": "10 July",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1259,
+      "end": 1273,
+      "text": "7 October 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1278,
+      "end": 1290,
+      "text": "7 March 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1313,
+      "end": 1328,
+      "text": "15 October 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1330,
+      "end": 1340,
+      "text": "19 January",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1345,
+      "end": 1357,
+      "text": "19 July 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2209,
+      "end": 2225,
+      "text": "15 December 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2266,
+      "end": 2285,
+      "text": "gave birth to a son",
+      "label": "DEM"
+    },
+    {
+      "start": 2291,
+      "end": 2307,
+      "text": "21 November 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2334,
+      "end": 2341,
+      "text": "his son",
+      "label": "DEM"
+    },
+    {
+      "start": 2375,
+      "end": 2392,
+      "text": "30 September 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2458,
+      "end": 2489,
+      "text": "Wodzislaw Śląski District Court",
+      "label": "ORG"
+    },
+    {
+      "start": 2552,
+      "end": 2568,
+      "text": "11 December 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2779,
+      "end": 2788,
+      "text": "7 January",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2790,
+      "end": 2801,
+      "text": "18 February",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2806,
+      "end": 2821,
+      "text": "25 October 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3009,
+      "end": 3024,
+      "text": "15 January 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3029,
+      "end": 3042,
+      "text": "30 March 2004",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3123,
+      "end": 3154,
+      "text": "Wodzisław Śląski District Court",
+      "label": "ORG"
+    },
+    {
+      "start": 3271,
+      "end": 3302,
+      "text": "Wodzisław Śląski District Court",
+      "label": "ORG"
+    },
+    {
+      "start": 3385,
+      "end": 3397,
+      "text": "9 April 2004",
+      "label": "DATETIME"
+    }
+  ],
+  "001-91042": [
+    {
+      "start": 54,
+      "end": 61,
+      "text": "5138/04",
+      "label": "CODE"
+    },
+    {
+      "start": 75,
+      "end": 93,
+      "text": "Republic of Turkey",
+      "label": "ORG"
+    },
+    {
+      "start": 235,
+      "end": 242,
+      "text": "Turkish",
+      "label": "DEM"
+    },
+    {
+      "start": 253,
+      "end": 270,
+      "text": "Mr Nusret Amutgan",
+      "label": "PERSON"
+    },
+    {
+      "start": 293,
+      "end": 309,
+      "text": "29 December 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 345,
+      "end": 357,
+      "text": "Ms B Özpolat",
+      "label": "PERSON"
+    },
+    {
+      "start": 382,
+      "end": 391,
+      "text": "Gaziantep",
+      "label": "LOC"
+    },
+    {
+      "start": 397,
+      "end": 415,
+      "text": "Turkish Government",
+      "label": "ORG"
+    },
+    {
+      "start": 472,
+      "end": 486,
+      "text": "4 January 2008",
+      "label": "DATETIME"
+    },
+    {
+      "start": 870,
+      "end": 874,
+      "text": "1970",
+      "label": "DATETIME"
+    },
+    {
+      "start": 917,
+      "end": 940,
+      "text": "Gaziantep H-type Prison",
+      "label": "ORG"
+    },
+    {
+      "start": 946,
+      "end": 959,
+      "text": "27 April 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1044,
+      "end": 1051,
+      "text": "Turkish",
+      "label": "DEM"
+    },
+    {
+      "start": 1141,
+      "end": 1178,
+      "text": "PKK (the Workers’ Party of Kurdistan)",
+      "label": "ORG"
+    },
+    {
+      "start": 1412,
+      "end": 1415,
+      "text": "PKK",
+      "label": "ORG"
+    },
+    {
+      "start": 1419,
+      "end": 1435,
+      "text": "13 February 1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1514,
+      "end": 1524,
+      "text": "6 May 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 1979,
+      "end": 1991,
+      "text": "15 June 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2021,
+      "end": 2052,
+      "text": "Diyarbakır State Security Court",
+      "label": "ORG"
+    },
+    {
+      "start": 2328,
+      "end": 2347,
+      "text": "seven co-defendants",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 2357,
+      "end": 2371,
+      "text": "20 August 1998",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2383,
+      "end": 2414,
+      "text": "Diyarbakır State Security Court",
+      "label": "ORG"
+    },
+    {
+      "start": 2534,
+      "end": 2537,
+      "text": "PKK",
+      "label": "ORG"
+    },
+    {
+      "start": 2541,
+      "end": 2545,
+      "text": "1995",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2797,
+      "end": 2813,
+      "text": "28 November 2002",
+      "label": "DATETIME"
+    },
+    {
+      "start": 2818,
+      "end": 2849,
+      "text": "Diyarbakır State Security Court",
+      "label": "ORG"
+    },
+    {
+      "start": 2952,
+      "end": 2965,
+      "text": "life sentence",
+      "label": "QUANTITY"
+    },
+    {
+      "start": 3276,
+      "end": 3293,
+      "text": "16 September 2003",
+      "label": "DATETIME"
+    },
+    {
+      "start": 3298,
+      "end": 3316,
+      "text": "Court of Cassation",
+      "label": "ORG"
+    }
+  ]
+}

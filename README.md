@@ -74,7 +74,9 @@ python3 benchmark_unified.py --dataset tab --max-records 5 --methods manual spac
 Key defaults:
 - `epsilon` defaults to `25.0`
 - `tab` uses `data/TAB/splitted/train.json` when no dataset path is provided
-- results are written under `outputs/unified_benchmark/<dataset>/<split>/benchmark_eps_25_0.json`
+- per-method artefacts are written to `outputs/<dataset>/<split>/annotations/`, grouped into `simple/`, `differential_privacy/`, and `k_anonymity/` folders (e.g. `annotations/differential_privacy/dpmlm_greedy_p095_eps25.json`)
+- each benchmark run writes its combined outputs to `outputs/<dataset>/<split>/texts/<timestamp>/`, containing `summary.json` (metadata only) and `records.jsonl` (original text plus every method output)
+- `_state/epsilon_<value>/` holds the reusable cache that lets you resume runs without recomputing every method
 - `--methods list` prints all supported anonymisation options
 
 Each method writes either token-level `annotations` or full `anonymized_text` pairs (original versus anonymised) so you can mix and match during evaluation. The helper `annotation_utils.apply_annotations(text, annotations)` converts any stored span format back into anonymised text at runtime for custom experiments.

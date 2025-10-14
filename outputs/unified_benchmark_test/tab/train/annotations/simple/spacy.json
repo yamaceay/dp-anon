@@ -1,0 +1,1541 @@
+{
+  "001-90194": [
+    {
+      "start": 54,
+      "end": 62,
+      "text": "36244/06",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 72,
+      "end": 94,
+      "text": "the Kingdom of Denmark",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 111,
+      "end": 116,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 123,
+      "end": 211,
+      "text": "Article 34 of the Convention for the Protection of Human Rights and Fundamental Freedoms",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 236,
+      "end": 242,
+      "text": "Danish",
+      "label": "NORP",
+      "confidence": 1.0
+    },
+    {
+      "start": 256,
+      "end": 271,
+      "text": "Henrik Hasslund",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 294,
+      "end": 308,
+      "text": "31 August 2006",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 347,
+      "end": 357,
+      "text": "Tyge Trier",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 382,
+      "end": 392,
+      "text": "Copenhagen",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 394,
+      "end": 415,
+      "text": "The Danish Government",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 471,
+      "end": 493,
+      "text": "Nina Holst-Christensen",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 497,
+      "end": 520,
+      "text": "the Ministry of Justice",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 526,
+      "end": 542,
+      "text": "5 September 2007",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 567,
+      "end": 584,
+      "text": "the Fifth Section",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 743,
+      "end": 757,
+      "text": "Article 29 § 3",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 765,
+      "end": 770,
+      "text": "FACTS",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 829,
+      "end": 833,
+      "text": "1973",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 847,
+      "end": 868,
+      "text": "Les Salles Sur Verdon",
+      "label": "FAC",
+      "confidence": 1.0
+    },
+    {
+      "start": 870,
+      "end": 876,
+      "text": "France",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 882,
+      "end": 908,
+      "text": "the beginning of the 1990s",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 959,
+      "end": 978,
+      "text": "selskabstømmersager",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 1003,
+      "end": 1010,
+      "text": "Denmark",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1568,
+      "end": 1606,
+      "text": "approximately one thousand six hundred",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 1649,
+      "end": 1674,
+      "text": "two billion Danish kroner",
+      "label": "MONEY",
+      "confidence": 1.0
+    },
+    {
+      "start": 1714,
+      "end": 1728,
+      "text": "the late 1980s",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1735,
+      "end": 1739,
+      "text": "1994",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1846,
+      "end": 1864,
+      "text": "the summer of 1993",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1870,
+      "end": 1874,
+      "text": "1994",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2053,
+      "end": 2064,
+      "text": "9 June 1994",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2154,
+      "end": 2166,
+      "text": "14 June 1994",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2314,
+      "end": 2345,
+      "text": "November 1994 to September 1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2347,
+      "end": 2350,
+      "text": "six",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2388,
+      "end": 2391,
+      "text": "two",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2399,
+      "end": 2403,
+      "text": "four",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2471,
+      "end": 2488,
+      "text": "19 September 1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2574,
+      "end": 2586,
+      "text": "the same day",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2694,
+      "end": 2710,
+      "text": "22 December 1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2767,
+      "end": 2792,
+      "text": "the Copenhagen City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2794,
+      "end": 2822,
+      "text": "Københavns Byret - hereafter",
+      "label": "PRODUCT",
+      "confidence": 1.0
+    },
+    {
+      "start": 2824,
+      "end": 2838,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2960,
+      "end": 2981,
+      "text": "the beginning of 1996",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2989,
+      "end": 3001,
+      "text": "January 1996",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3005,
+      "end": 3014,
+      "text": "June 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3075,
+      "end": 3079,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3128,
+      "end": 3135,
+      "text": "Denmark",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3137,
+      "end": 3148,
+      "text": "Switzerland",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3153,
+      "end": 3159,
+      "text": "Sweden",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3184,
+      "end": 3191,
+      "text": "Denmark",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3251,
+      "end": 3259,
+      "text": "Interpol",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3261,
+      "end": 3268,
+      "text": "fifteen",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3364,
+      "end": 3377,
+      "text": "19 March 1997",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3532,
+      "end": 3544,
+      "text": "25 June 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3578,
+      "end": 3592,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3631,
+      "end": 3635,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3754,
+      "end": 3761,
+      "text": "fifteen",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3787,
+      "end": 3797,
+      "text": "fifty-nine",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3808,
+      "end": 3826,
+      "text": "between March 1992",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3831,
+      "end": 3839,
+      "text": "May 1993",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3888,
+      "end": 3897,
+      "text": "9,890,000",
+      "label": "MONEY",
+      "confidence": 1.0
+    },
+    {
+      "start": 3899,
+      "end": 3928,
+      "text": "approximately 1,300,000 euros",
+      "label": "MONEY",
+      "confidence": 1.0
+    },
+    {
+      "start": 4000,
+      "end": 4028,
+      "text": "approximately EUR 19,000,000",
+      "label": "MONEY",
+      "confidence": 1.0
+    },
+    {
+      "start": 4031,
+      "end": 4053,
+      "text": "Between 14 August 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4058,
+      "end": 4071,
+      "text": "10 March 1999",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4073,
+      "end": 4080,
+      "text": "fifteen",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4222,
+      "end": 4235,
+      "text": "15 March 1999",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4238,
+      "end": 4259,
+      "text": "Between 15 March 1999",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4264,
+      "end": 4279,
+      "text": "31 January 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4292,
+      "end": 4295,
+      "text": "119",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4335,
+      "end": 4339,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4355,
+      "end": 4372,
+      "text": "more than seventy",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4569,
+      "end": 4574,
+      "text": "1,330",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4618,
+      "end": 4626,
+      "text": "ten days",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4630,
+      "end": 4643,
+      "text": "November 2000",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4648,
+      "end": 4660,
+      "text": "January 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4680,
+      "end": 4692,
+      "text": "6 April 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4707,
+      "end": 4710,
+      "text": "220",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4718,
+      "end": 4732,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 4799,
+      "end": 4802,
+      "text": "one",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 4894,
+      "end": 4904,
+      "text": "two years’",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 4949,
+      "end": 4958,
+      "text": "2,200,000",
+      "label": "MONEY",
+      "confidence": 1.0
+    },
+    {
+      "start": 5205,
+      "end": 5219,
+      "text": "The City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 5313,
+      "end": 5340,
+      "text": "Article 6 of the Convention",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 5366,
+      "end": 5380,
+      "text": "The City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 5501,
+      "end": 5505,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 5614,
+      "end": 5628,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 5651,
+      "end": 5678,
+      "text": "Article 6 of the Convention",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 5736,
+      "end": 5739,
+      "text": "one",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 5840,
+      "end": 5854,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 5932,
+      "end": 5936,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 6111,
+      "end": 6125,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 6212,
+      "end": 6226,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 6545,
+      "end": 6559,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 6696,
+      "end": 6707,
+      "text": "15 May 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 6730,
+      "end": 6734,
+      "text": "five",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 6779,
+      "end": 6793,
+      "text": "the High Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 6814,
+      "end": 6828,
+      "text": "Østre Landsret",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 6832,
+      "end": 6846,
+      "text": "the High Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 6868,
+      "end": 6874,
+      "text": "twelve",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 6917,
+      "end": 6920,
+      "text": "one",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 6924,
+      "end": 6941,
+      "text": "13 September 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7020,
+      "end": 7037,
+      "text": "24 September 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7166,
+      "end": 7184,
+      "text": "the autumn of 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7225,
+      "end": 7242,
+      "text": "24 September 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7279,
+      "end": 7283,
+      "text": "2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7288,
+      "end": 7292,
+      "text": "2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7305,
+      "end": 7313,
+      "text": "about 90",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 7349,
+      "end": 7372,
+      "text": "February and March 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7465,
+      "end": 7479,
+      "text": "the High Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 7527,
+      "end": 7532,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 7551,
+      "end": 7554,
+      "text": "861",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 7598,
+      "end": 7606,
+      "text": "ten days",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7610,
+      "end": 7620,
+      "text": "April, May",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7626,
+      "end": 7635,
+      "text": "June 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7641,
+      "end": 7658,
+      "text": "28 September 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7659,
+      "end": 7673,
+      "text": "the High Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 7681,
+      "end": 7695,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 7910,
+      "end": 7927,
+      "text": "19 September 1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 7954,
+      "end": 7968,
+      "text": "The High Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 7978,
+      "end": 7992,
+      "text": "the City Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 8061,
+      "end": 8088,
+      "text": "Article 6 of the Convention",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 8200,
+      "end": 8217,
+      "text": "13 September 2001",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8279,
+      "end": 8293,
+      "text": "12 August 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8324,
+      "end": 8339,
+      "text": "the autumn 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8344,
+      "end": 8365,
+      "text": "the beginning of 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8584,
+      "end": 8601,
+      "text": "24 September 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8682,
+      "end": 8702,
+      "text": "7 to 12 October 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 8755,
+      "end": 8780,
+      "text": "the Leave to Appeal Board",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 8836,
+      "end": 8853,
+      "text": "the Supreme Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 8868,
+      "end": 8873,
+      "text": "Three",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 8988,
+      "end": 9004,
+      "text": "17 December 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9009,
+      "end": 9021,
+      "text": "January 2005",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9088,
+      "end": 9101,
+      "text": "29 March 2005",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9188,
+      "end": 9201,
+      "text": "5 August 2005",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9202,
+      "end": 9227,
+      "text": "the Leave to Appeal Board",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 9313,
+      "end": 9326,
+      "text": "9 August 2005",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9339,
+      "end": 9342,
+      "text": "one",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 9537,
+      "end": 9547,
+      "text": "2 May 2006",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9576,
+      "end": 9601,
+      "text": "the Leave to Appeal Board",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 9760,
+      "end": 9778,
+      "text": "2 and 13 June 2006",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9832,
+      "end": 9844,
+      "text": "21 June 2006",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 9888,
+      "end": 9905,
+      "text": "the Supreme Court",
+      "label": "ORG",
+      "confidence": 1.0
+    }
+  ],
+  "001-84741": [
+    {
+      "start": 54,
+      "end": 62,
+      "text": "29366/03",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 72,
+      "end": 94,
+      "text": "the Republic of Poland",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 111,
+      "end": 116,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 123,
+      "end": 211,
+      "text": "Article 34 of the Convention for the Protection of Human Rights and Fundamental Freedoms",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 237,
+      "end": 248,
+      "text": "D. Stępniak",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 252,
+      "end": 264,
+      "text": "25 July 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 267,
+      "end": 288,
+      "text": "The Polish Government",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 344,
+      "end": 358,
+      "text": "J. Wołąsiewicz",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 362,
+      "end": 393,
+      "text": "the Ministry of Foreign Affairs",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 399,
+      "end": 413,
+      "text": "5 January 2007",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 431,
+      "end": 449,
+      "text": "the Fourth Section",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 535,
+      "end": 567,
+      "text": "Article 29 § 3 of the Convention",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 736,
+      "end": 740,
+      "text": "1964",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 754,
+      "end": 759,
+      "text": "Bytom",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 762,
+      "end": 763,
+      "text": "1",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 795,
+      "end": 810,
+      "text": "21 October 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 856,
+      "end": 871,
+      "text": "24 October 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 872,
+      "end": 890,
+      "text": "the District Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 894,
+      "end": 910,
+      "text": "Wodzisław Śląski",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 1247,
+      "end": 1254,
+      "text": "10 July",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1259,
+      "end": 1273,
+      "text": "7 October 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1278,
+      "end": 1290,
+      "text": "7 March 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1313,
+      "end": 1328,
+      "text": "15 October 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1330,
+      "end": 1344,
+      "text": "19 January and",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1345,
+      "end": 1357,
+      "text": "19 July 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2201,
+      "end": 2225,
+      "text": "Between 15 December 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2291,
+      "end": 2307,
+      "text": "21 November 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2345,
+      "end": 2359,
+      "text": "at least three",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2375,
+      "end": 2392,
+      "text": "30 September 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2454,
+      "end": 2489,
+      "text": "the Wodzislaw Śląski District Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2552,
+      "end": 2568,
+      "text": "11 December 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2779,
+      "end": 2788,
+      "text": "7 January",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2790,
+      "end": 2801,
+      "text": "18 February",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2806,
+      "end": 2821,
+      "text": "25 October 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2883,
+      "end": 2884,
+      "text": "2",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2969,
+      "end": 2972,
+      "text": "two",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3000,
+      "end": 3005,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3009,
+      "end": 3024,
+      "text": "15 January 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3029,
+      "end": 3042,
+      "text": "30 March 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3064,
+      "end": 3069,
+      "text": "first",
+      "label": "ORDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3119,
+      "end": 3154,
+      "text": "the Wodzisław Śląski District Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3220,
+      "end": 3226,
+      "text": "second",
+      "label": "ORDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 3267,
+      "end": 3302,
+      "text": "the Wodzisław Śląski District Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3385,
+      "end": 3397,
+      "text": "9 April 2004",
+      "label": "DATE",
+      "confidence": 1.0
+    }
+  ],
+  "001-91042": [
+    {
+      "start": 54,
+      "end": 61,
+      "text": "5138/04",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 71,
+      "end": 93,
+      "text": "the Republic of Turkey",
+      "label": "GPE",
+      "confidence": 1.0
+    },
+    {
+      "start": 110,
+      "end": 115,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 122,
+      "end": 210,
+      "text": "Article 34 of the Convention for the Protection of Human Rights and Fundamental Freedoms",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 235,
+      "end": 242,
+      "text": "Turkish",
+      "label": "NORP",
+      "confidence": 1.0
+    },
+    {
+      "start": 256,
+      "end": 270,
+      "text": "Nusret Amutgan",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 293,
+      "end": 309,
+      "text": "29 December 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 345,
+      "end": 357,
+      "text": "Ms B Özpolat",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 382,
+      "end": 391,
+      "text": "Gaziantep",
+      "label": "PERSON",
+      "confidence": 1.0
+    },
+    {
+      "start": 393,
+      "end": 415,
+      "text": "The Turkish Government",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 472,
+      "end": 486,
+      "text": "4 January 2008",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 491,
+      "end": 496,
+      "text": "Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 781,
+      "end": 795,
+      "text": "Article 29 § 3",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 870,
+      "end": 874,
+      "text": "1970",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 946,
+      "end": 959,
+      "text": "27 April 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1044,
+      "end": 1051,
+      "text": "Turkish",
+      "label": "NORP",
+      "confidence": 1.0
+    },
+    {
+      "start": 1141,
+      "end": 1144,
+      "text": "PKK",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 1146,
+      "end": 1177,
+      "text": "the Workers’ Party of Kurdistan",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 1412,
+      "end": 1415,
+      "text": "PKK",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 1419,
+      "end": 1435,
+      "text": "13 February 1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1514,
+      "end": 1524,
+      "text": "6 May 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 1979,
+      "end": 1991,
+      "text": "15 June 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2017,
+      "end": 2052,
+      "text": "the Diyarbakır State Security Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2258,
+      "end": 2269,
+      "text": "Article 125",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 2273,
+      "end": 2290,
+      "text": "the Criminal Code",
+      "label": "LAW",
+      "confidence": 1.0
+    },
+    {
+      "start": 2328,
+      "end": 2333,
+      "text": "seven",
+      "label": "CARDINAL",
+      "confidence": 1.0
+    },
+    {
+      "start": 2357,
+      "end": 2371,
+      "text": "20 August 1998",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2379,
+      "end": 2414,
+      "text": "the Diyarbakır State Security Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2534,
+      "end": 2537,
+      "text": "PKK",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 2541,
+      "end": 2545,
+      "text": "1995",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2797,
+      "end": 2813,
+      "text": "28 November 2002",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 2814,
+      "end": 2849,
+      "text": "the Diyarbakır State Security Court",
+      "label": "ORG",
+      "confidence": 1.0
+    },
+    {
+      "start": 3276,
+      "end": 3293,
+      "text": "16 September 2003",
+      "label": "DATE",
+      "confidence": 1.0
+    },
+    {
+      "start": 3294,
+      "end": 3316,
+      "text": "the Court of Cassation",
+      "label": "ORG",
+      "confidence": 1.0
+    }
+  ]
+}
