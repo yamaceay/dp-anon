@@ -8,7 +8,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Any
 
 from tqdm import tqdm
 
@@ -163,38 +163,47 @@ class StandaloneAnnotationGenerator:
 
     def generate_manual_annotations(
         self,
-        manual_data: Dict[str, Sequence[Dict[str, object]]],
+        records: Sequence[DatasetRecord],
     ) -> Tuple[Dict[str, List], Dict[str, float]]:
-        manual_annotations_dict: Dict[str, List[Dict[str, object]]] = {}
+        final_records: Dict[str, List] = {}
 
-        for doc_id, entities in manual_data.items():
-            entities_sorted = sorted(
-                (
+        for record in records:
+            final_annotations = []
+            all_annotations = record.annotations
+            for annotator_id, annotations in all_annotations.items():
+                final_annotations.extend(
                     {
-                        "start": ent.get("start") or ent.get("start_offset", 0),
-                        "end": ent.get("end") or ent.get("end_offset", 0),
-                        "text": ent.get("text") or ent.get("span_text") or ent.get("span_ext", ""),
-                        "label": ent.get("label") or ent.get("entity_type", "UNKNOWN"),
-                        "confidence": float(ent.get("confidence", 1.0)),
+                        "start": annot.get("start_offset", 0),
+                        "end":annot.get("end_offset", 0),
+                        "text": annot.get("span_text"),
+                        "label": annot.get("entity_type"),
+                        "confidence": 1.0,
+                        "metadata": {
+                            "annotator_id": annotator_id,
+                            "confidential_status": annot.get("confidential_status"),
+                            "identifier_type": annot.get("identifier_type"),
+                        }
                     }
-                    for ent in entities
-                ),
+                    for annot in annotations["entity_mentions"]
+                )
+            final_annotations_sorted = sorted(
+                final_annotations,
                 key=lambda x: x["start"],
             )
-            manual_annotations_dict[str(doc_id)] = entities_sorted
+            final_records.update({str(record.uid): final_annotations_sorted})
 
-        documents_with_annotations = sum(1 for anns in manual_annotations_dict.values() if anns)
-        total_spans = sum(len(anns) for anns in manual_annotations_dict.values())
+        documents_with_annotations = sum(1 for anns in final_records if anns)
+        total_spans = sum(len(anns) for anns in final_records.values())
         stats = {
-            "total_documents": len(manual_annotations_dict),
+            "total_documents": len(final_records),
             "documents_with_annotations": documents_with_annotations,
             "total_spans": total_spans,
-            "coverage": documents_with_annotations / len(manual_annotations_dict) if manual_annotations_dict else 0,
+            "coverage": documents_with_annotations / len(final_records) if final_records else 0,
             "average_spans_per_document": (total_spans / documents_with_annotations
                                             if documents_with_annotations > 0 else 0),
         }
 
-        return manual_annotations_dict, stats
+        return final_records, stats
 
     def save_annotations(self, annotations: Dict[str, List], output_file: str, indent = None) -> None:
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -232,13 +241,8 @@ def parse_args() -> argparse.Namespace:
         help="Annotation methods to run (spacy, presidio, manual).",
     )
     parser.add_argument(
-        "--manual-file",
-        default=None,
-        help="Path to manual annotations JSON ({uid: [ spans ]}).",
-    )
-    parser.add_argument(
         "--output-dir",
-        default="outputs/annotations",
+        default="outputs",
         help="Directory to write annotation files.",
     )
     parser.add_argument(
@@ -316,12 +320,7 @@ def main() -> None:
             elif method == "presidio":
                 annotations, stats = generator.generate_presidio_annotations(records)
             elif method == "manual":
-                if not args.manual_file:
-                    print("Manual method requires --manual-file pointing to JSON data.")
-                    continue
-                with open(args.manual_file, "r", encoding="utf-8") as handle:
-                    manual_data = json.load(handle)
-                annotations, stats = generator.generate_manual_annotations(manual_data)
+                annotations, stats = generator.generate_manual_annotations(records)
             else:
                 print(f"Method '{method}' not supported.")
                 continue

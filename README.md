@@ -62,3 +62,19 @@ cat data/TAB/splitted/test.json | jq '.[0].text' | python3 main.py \
     --device cuda \
     --config configs/config.json
 ```
+
+### 🧪 Unified Benchmark Runner
+
+For side-by-side evaluations across rule-based annotations, DP rewriting models, and PETRE variants, use the unified benchmark script:
+
+```bash
+python3 benchmark_unified.py --dataset tab --max-records 5 --methods manual spacy dpmlm_greedy_p095 dpprompt
+```
+
+Key defaults:
+- `epsilon` defaults to `25.0`
+- `tab` uses `data/TAB/splitted/train.json` when no dataset path is provided
+- results are written under `outputs/unified_benchmark/<dataset>/<split>/benchmark_eps_25_0.json`
+- `--methods list` prints all supported anonymisation options
+
+Each method writes either token-level `annotations` or full `anonymized_text` pairs (original versus anonymised) so you can mix and match during evaluation. The helper `annotation_utils.apply_annotations(text, annotations)` converts any stored span format back into anonymised text at runtime for custom experiments.
